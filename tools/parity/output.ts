@@ -10,14 +10,15 @@ const NOINDEX = '<meta name="robots" content="noindex">';
 const files = (dir: string, ext: RegExp): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name), ext) : ext.test(e.name) ? [join(dir, e.name)] : []));
 const sources = (dir: string) => files(dir, /\.(ts|astro|css)$/);
 
-export async function output(dist: string, review: boolean) {
+export async function output(dist: string, review: boolean, index = false) {
+  const hidden = !review && !index;
   const problems: string[] = [], html = readFileSync(join(dist, 'index.html'), 'utf8');
   const pages = [['index.html', html], ...projects.filter((p) => existsSync(join(dist, 'work', p.id, 'index.html'))).map((p) => [`work/${p.id}/index.html`, readFileSync(join(dist, 'work', p.id, 'index.html'), 'utf8')])];
   for (const [name, page] of pages) for (const m of [...page.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n').matchAll(TWO_D)) problems.push(`2D transform in ${name} CSS: ${m[0]}`);
   for (const file of sources('src')) for (const m of readFileSync(file, 'utf8').matchAll(/(?:transform|keyframes)[^;{}]*?\b(translate[XYZ]?|scale[XYZ]?|rotate[XYZ]?|translate|scale|rotate)\(/g)) problems.push(`2D transform in ${file}: ${m[1]}(`);
   if (review !== html.includes('id="rvw"')) problems.push(`Review tab ${review ? 'missing' : 'present'}`);
   if (!review && /space-review|\.rvw \.box/.test(html + readdirSync(join(dist, '_astro')).filter((f) => f.endsWith('.js')).map((f) => readFileSync(join(dist, '_astro', f), 'utf8')).join(''))) problems.push('Review code in the live build');
-  if (review === html.includes(NOINDEX)) problems.push(`noindex meta ${review ? 'present' : 'missing'}`);
+  if (hidden !== html.includes(NOINDEX)) problems.push(`noindex meta ${hidden ? 'missing' : 'present'}`);
   for (const p of projects) {
     const file = join(dist, 'work', p.id, 'index.html');
     if (!existsSync(file)) { problems.push(`work/${p.id}/index.html missing`); continue; }
@@ -26,10 +27,10 @@ export async function output(dist: string, review: boolean) {
     if (!/<meta name="description" content="[^"]+">/.test(page)) problems.push(`${at} description`);
     if (!new RegExp(`<link rel="canonical" href="https://[^"]+/${at}/">`).test(page)) problems.push(`${at} canonical`);
     if (!page.includes(`aria-label="${p.title} case study"><div class="cpw" id="cpw" aria-hidden="true"><div class="cplanet">`) || !page.includes('<div class="chd" data-stage>')) problems.push(`${at} case not server rendered`);
-    if (review === page.includes(NOINDEX)) problems.push(`${at} noindex meta ${review ? 'present' : 'missing'}`);
+    if (hidden !== page.includes(NOINDEX)) problems.push(`${at} noindex meta ${hidden ? 'missing' : 'present'}`);
     if ((html.match(new RegExp(`href="[^"]*/${at}/"`, 'g')) ?? []).length !== 3) problems.push(`home links to ${at}`);
   }
-  if (!existsSync(join(dist, '_headers')) || !readFileSync(join(dist, '_headers'), 'utf8').includes('X-Robots-Tag: noindex')) problems.push('X-Robots-Tag header missing');
+  if (index === (existsSync(join(dist, '_headers')) && readFileSync(join(dist, '_headers'), 'utf8').includes('X-Robots-Tag: noindex'))) problems.push(`X-Robots-Tag header ${index ? 'present' : 'missing'}`);
   const assets = new Map(files('src/assets', /\.webp$/).map((f) => [basename(f, '.webp'), f]));
   for (const f of readdirSync(join(dist, '_astro')).filter((f) => /\.(webp|avif)$/.test(f))) {
     const name = f.split('.')[0], [out, src] = await Promise.all([sharp(join(dist, '_astro', f)).metadata(), sharp(assets.get(name) ?? join('src/assets', `${name}.webp`)).metadata()]);
@@ -37,6 +38,6 @@ export async function output(dist: string, review: boolean) {
     if ((out.width !== src.width || out.height !== src.height) && !variant) problems.push(`${f} is ${out.width}x${out.height}, source ${src.width}x${src.height}`);
   }
   for (const f of readdirSync(join(dist, '_astro'))) if ((/^bg-(wide|tall)\..+\.(avif|webp)$/.test(f) && !(f in paint.paintings)) || (/^ship\.[^.]+\.webp$/.test(f) && !(f in paint.ships))) problems.push(`${f} has no shipped analysis, run bun run paint`);
-  console.log(problems.length ? problems.join('\n') : `output: clean (${review ? 'review' : 'live'} build)`);
+  console.log(problems.length ? problems.join('\n') : `output: clean (${review ? 'review' : index ? 'indexed' : 'live'} build)`);
   return problems;
 }

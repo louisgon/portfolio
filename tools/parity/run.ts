@@ -22,5 +22,5 @@ if (check === 'video') await video(a, b, out, arg('only'));
 if (check === 'timing') await timing(a, b, out, Number(arg('runs', '3')));
 if (check === 'health') await health([a, b], out);
 if (check === 'keys') await keys([a, b], out);
-if (check === 'output') process.exit((await output(arg('b', 'dist')!, process.argv.includes('--review'))).length ? 1 : 0);
+if (check === 'output') process.exit((await output(arg('b', 'dist')!, process.argv.includes('--review'), process.argv.includes('--index'))).length ? 1 : 0);
 process.exit(0);

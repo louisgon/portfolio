@@ -30,7 +30,7 @@ const page = pageMeta(open === undefined ? undefined : site.projects[open]);
 <html lang="en" class={open === undefined ? undefined : 'case-lock'}>
 <head>
 <meta charset="utf-8">
-{!__REVIEW__ && <meta name="robots" content="noindex">}
+{!__REVIEW__ && !__INDEX__ && <meta name="robots" content="noindex">}
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{page.title}</title>
 <meta name="description" content={page.description}>

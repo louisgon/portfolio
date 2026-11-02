@@ -146,7 +146,7 @@ export function spawner(dt: number) {
   const due = !G.boss && !G.cache && !G.switching;
   if (!G.warned && due && t >= G.nextBoss - 3) { const n = FAC[G.fac].short; G.warned = true; msg('Warning', `${n} inbound`, 2400, true, '', 3); live(`Warning. ${n} inbound.`); D.hero.classList.add('bossing'); }
   if (due && t >= G.nextBoss && spawnBoss()) { G.nextBoss = Infinity; G.warned = false; }
-  if (t >= 60 && !G.tips.hv) { G.tips.hv = 1; msg('Gunships', 'Slow and armoured', 1200, false, '', 0); }
+  if (t >= 60 && !G.tips.hv) { G.tips.hv = 1; msg('Gunships', 'Slow and armored', 1200, false, '', 0); }
   if (t >= 120 && !G.tips.arm) { G.tips.arm = 1; msg('Gunships armed', 'Their shots are slow', 1300, false, '', 0); }
   const re = regenEvery();
   if (re && G.hull < maxHull()) { G.regen += dt; if (G.regen >= re) { G.regen = 0; G.hull++; setHull(false, true); live(`Hull repaired. ${G.hull} hull.`); } } else G.regen = 0;

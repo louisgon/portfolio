@@ -19,7 +19,7 @@ export function stackTick(now: number) {
   const r = table.getBoundingClientRect(), base = reduce ? 1 : Math.min(clamp((innerHeight - r.top) / (innerHeight * 0.75)), clamp((now - revealAt - 100) / 900)), rail = innerWidth < 600;
   cards.forEach((c, i) => {
     const el = c.el, k = out(clamp(base * 2 - (rail ? 0 : i * 0.1))), a = 1 - k;
-    c.h = lerp(c.h, c.ht && k > 0.98 ? 1 : 0, lf(0.15));
+    c.h = reduce ? 0 : lerp(c.h, c.ht && k > 0.98 ? 1 : 0, lf(0.15));
     el.style.transform = `translate3d(0, ${a * 110 - c.h * 10 + (reduce ? 0 : Math.sin(now / 1600 + i * 0.35) * 3 * k * (1 - c.h))}px, ${a * -80 + c.h * 30}px) rotate3d(1, 0, 0, ${a * 16 - c.hy * 12 * c.h}deg) rotate3d(0, 1, 0, ${c.hx * 12 * c.h}deg) rotate3d(0, 0, 1, ${a * (i - 1.5) * 1.5}deg)`;
     el.style.opacity = String(Math.min(1, k * 1.4)); c.shine.style.setProperty('--so', String(c.h));
     const g = Math.round(clamp((k - 0.55) / 0.45) * 100) / 100; if (g !== c.g) { c.g = g; el.style.setProperty('--g', String(g)); }

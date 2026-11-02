@@ -21,12 +21,12 @@ export function decode(el: HTMLElement, delay = 0) {
   const start = () => {
     const lab = el.textContent!.replace(/\s+/g, ' ').trim(), hadLab = el.hasAttribute('aria-label'); if (!hadLab) el.setAttribute('aria-label', lab);
     const cs = getComputedStyle(el), font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`, up = cs.textTransform === 'uppercase', ls = parseFloat(cs.letterSpacing) || 0;
-    const box = el.getBoundingClientRect(), sx = box.width ? el.offsetWidth / box.width || 1 : 1, cells: [HTMLSpanElement, string, string][] = [], swaps: [ChildNode, Node][] = [];
+    const box = el.getBoundingClientRect(), sx = box.width ? el.offsetWidth / box.width || 1 : 1, cells: [HTMLSpanElement, string, string][] = [], gw = new Map<string, number>(), swaps: [ChildNode, Node][] = [];
     // text with neighbours scrambles on a copy laid over the untouched original, so nothing beside it can move; masked heading lines keep their reveal by scrambling in place
     const float = !el.querySelector('.ln'), pos = el.style.position, real: HTMLSpanElement[] = [];
     let stage: HTMLElement = el;
     if (float) {
-      stage = document.createElement('span'); stage.setAttribute('aria-hidden', 'true'); stage.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;padding:inherit;box-sizing:border-box;pointer-events:none';
+      stage = document.createElement('span'); stage.inert = true; stage.setAttribute('aria-hidden', 'true'); stage.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;padding:inherit;box-sizing:border-box;pointer-events:none';
       el.childNodes.forEach((n) => stage.append(n.cloneNode(true)));
       textsIn(el).forEach((n) => { const h = document.createElement('span'); h.style.cssText = 'color:transparent;-webkit-text-fill-color:transparent;text-shadow:none';
         n.textContent!.split(/(\s+)/).forEach((w) => { if (!w) return; if (/^\s+$/.test(w)) { h.append(w); return; } const r = document.createElement('span'); r.textContent = w; h.append(r); real.push(r); });
@@ -47,14 +47,14 @@ export function decode(el: HTMLElement, delay = 0) {
     words.forEach(([s, w]) => {
       const total = s.getBoundingClientRect().width * sx, ws = [...w].map((ch) => ctx.measureText(up ? ch.toUpperCase() : ch).width + ls), sum = ws.reduce((x, y) => x + y, 0);
       s.textContent = '';
-      [...w].forEach((ch, i) => { const c = document.createElement('span'), g = document.createElement('span'); c.style.cssText = `display:inline-block;width:${(ws[i] * total / sum).toFixed(3)}px;text-align:center`; g.style.display = 'inline-block'; g.textContent = ch; c.append(g); s.append(c); cells.push([g, ch, poolFor(font, up, ch)]); });
+      [...w].forEach((ch, i) => { const c = document.createElement('span'), g = document.createElement('span'); c.style.cssText = `display:inline-block;width:${(ws[i] * total / sum).toFixed(3)}px;text-align:center`; g.textContent = ch; c.append(g); s.append(c); const pool = poolFor(font, up, ch); for (const p of pool + ch) if (!gw.has(p)) gw.set(p, ctx.measureText(up ? p.toUpperCase() : p).width + ls); g.style.cssText = 'display:inline-block;will-change:transform;backface-visibility:hidden'; cells.push([g, ch, pool]); });
     });
     const total = cells.length, t0 = performance.now() + delay, dur = 520 + total * 14;
     (function tick(now: number) {
       const k = (now - t0) / dur;
       cells.forEach(([g, ch, pool], j) => {
         const real = k * 1.35 - (j / total) * 0.9 > 0.45, v = real ? ch : pool[(Math.random() * pool.length) | 0];
-        if (g.textContent !== v) g.textContent = v;
+        if (g.textContent !== v) { g.textContent = v; g.style.transform = real ? '' : `scale3d(${(gw.get(ch)! / gw.get(v)!).toFixed(3)}, 1, 1)`; }
       });
       if (k < 1) { requestAnimationFrame(tick); return; }
       if (float) { stage.remove(); el.style.position = pos; }

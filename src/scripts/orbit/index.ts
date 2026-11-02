@@ -27,7 +27,7 @@ function measurePace(now: number, iv: number) {
   if (pace.n < PACE.n) return;
   const slow = pace.slow >= (pace.gap ? PACE.n / 2 : PACE.n - 2);
   pace.wait = slow && pace.gap ? Math.min(pace.wait * 2, 60000) : PACE.wait;
-  if (++pace.v === 1 && !slow) sharpen(2); else if (pace.v === 2 && slow && V.gpuCap > 0.6) sharpen(0.6);
+  pace.v++; if (!slow && V.gpuCap < 2) sharpen(2); else if (pace.v === 2 && slow && V.gpuCap > 0.6) sharpen(0.6);
   pace.gap = slow ? clamp(2 * pace.sum / pace.slow, 66, 250) : 0; pace.t = now; pace.known = true; pace.n = pace.slow = pace.sum = 0;
 }
 function sharpen(cap: number) { if (V.gpuCap !== cap) { V.gpuCap = cap; if (game) game.S.key = ''; size(); } }

@@ -15,7 +15,7 @@
     "story": {
       "brief": "Anne Graham Lotz’s ministry publishes daily devotions, articles, Bible studies and video teaching in several languages, and needed one fast site to hold all of it.",
       "did": "I set up the Astro app on Cloudflare Workers and the headless WordPress theme behind it, then built the pages and blocks, a resource library with nested filters editors control, Algolia search, translation through Polylang and DeepL, and a Durable Object cache that batches reads and refreshes stale pages in the background.",
-      "result": "Editors organise resources and compose pages from blocks, readers find studies and devotions in their own language, and pages stay fast as content changes."
+      "result": "Editors organize resources and compose pages from blocks, readers find studies and devotions in their own language, and pages stay fast as content changes."
     }
   },
   {

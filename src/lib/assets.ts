@@ -24,9 +24,10 @@ const png = async (px: Buffer, width: number, height: number, channels: 3 | 4) =
   for (let o = 8; o < b.length; o += b.readUInt32BE(o) + 12) if (['IHDR', 'IDAT', 'IEND'].includes(b.toString('ascii', o + 4, o + 8))) keep.push(b.subarray(o, o + b.readUInt32BE(o) + 12));
   return `url(data:image/png;base64,${Buffer.concat(keep).toString('base64')})`;
 };
-export const haze = async (name: string, cols: number, rows: number) => {
-  const px = await sharp(join(process.cwd(), 'src/assets', `${name}.webp`)).resize(cols, rows, { fit: 'fill', kernel: 'lanczos3' }).blur(0.5).removeAlpha().raw().toBuffer();
-  return `${await png(px, cols, rows, 3)} 50% 50% / ${+(cols / (cols - 1) * 100).toFixed(4)}% ${+(rows / (rows - 1) * 100).toFixed(4)}% no-repeat`;
+export const haze = async (name: string, cols: number, rows: number, w = cols, h = rows) => {
+  const grid = await sharp(join(process.cwd(), 'src/assets', `${name}.webp`)).resize(cols, rows, { fit: 'fill', kernel: 'lanczos3' }).blur(0.5).removeAlpha().raw().toBuffer();
+  const px = w === cols ? grid : await sharp(grid, { raw: { width: cols, height: rows, channels: 3 } }).resize(w, h, { fit: 'fill', kernel: 'cubic' }).raw().toBuffer();
+  return `${await png(px, w, h, 3)} 50% 50% / ${+(w / (w - 1) * 100).toFixed(4)}% ${+(h / (h - 1) * 100).toFixed(4)}% no-repeat`;
 };
 const SHADE = [[0, .62], [.25, .52], [.45, .33], [.62, .16], [.78, .05], [1, 0]];
 export const shade = async (n: number) => {

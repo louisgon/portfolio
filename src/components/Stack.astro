@@ -12,7 +12,7 @@ import { nn } from '../lib/sections';
     <Heading lines={['The whole', 'stack']} />
     <p class="sub st" style="--i:2">The full job, from the first pixel to the server it runs on.</p>
   </div>
-  <div class="table" id="table">
+  <div class="table" id="table" tabindex="0" role="region" aria-label="Stack cards">
     {SKILLS.map((c, n) => (
       <div class="slot">
         <div class="card">

@@ -40,7 +40,7 @@
 @keyframes ping { from { transform: scale3d(.5, .5, 1); opacity: 1; } to { transform: scale3d(1.8, 1.8, 1); opacity: 0; } }
 @media (max-width: 860px) { #pilot .roles li { grid-template-columns: 70px minmax(0, 1fr); gap: 16px; } #pilot .roles .yr { font-size: 19px; } }
 #pilot .holo { will-change: auto; }
-#pilot .holo .sheen { position: absolute; inset: -30%; pointer-events: none; background: linear-gradient(115deg, transparent 42%, rgb(170 225 255 / 16%) 48%, rgb(255 255 255 / 22%) 50%, rgb(170 225 255 / 16%) 52%, transparent 58%); mix-blend-mode: screen; animation: sheen 7s cubic-bezier(.45, 0, .2, 1) infinite; will-change: transform; }
+#pilot .holo .sheen { position: absolute; inset: -30%; pointer-events: none; background: linear-gradient(115deg, transparent 42%, rgb(170 225 255 / 9%) 48%, rgb(255 255 255 / 13%) 50%, rgb(170 225 255 / 9%) 52%, transparent 58%); animation: sheen 7s cubic-bezier(.45, 0, .2, 1) infinite; will-change: transform; backface-visibility: hidden; }
 @keyframes sheen { 0% { transform: translate3d(-45%, 0, 0); } 55%, 100% { transform: translate3d(45%, 0, 0); } }
 #pilot .holo .lines { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgb(140 200 255 / 6%) 0 1px, transparent 1px 4px); }
 #pilot .holo .rim { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; box-shadow: inset 0 0 0 1px rgb(143 211 255 / 35%), inset 0 0 40px rgb(80 170 255 / 22%); }

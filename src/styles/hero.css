@@ -19,7 +19,7 @@
 #hero .copy::before { content: ""; position: absolute; z-index: -1; inset: -25% -20% -45% -15%; pointer-events: none; opacity: .935; background: var(--shade) 93.75% 27.273% / 132% 144% no-repeat; }
 #hero .hl { margin: 0; font-size: clamp(40px, 4.8vw, 92px); line-height: .98; text-shadow: 0 6px 34px rgb(0 0 0 / 55%); }
 #hero .hl span { display: block; }
-#hero .hs { margin: 24px 0 0; max-width: 42ch; color: #c9d6f2; font-size: clamp(17px, 1.35vw, 20px); text-shadow: 0 2px 20px rgb(0 0 0 / 70%); }
+#hero .hs { margin: 24px 0 0; max-width: 42ch; text-wrap: balance; color: #c9d6f2; font-size: clamp(17px, 1.35vw, 20px); text-shadow: 0 2px 20px rgb(0 0 0 / 70%); }
 #hero .hc { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
 
 #hero .fly { position: absolute; z-index: 5; left: 0; top: 0; width: 0; height: 0; padding: 0; border: 0; background: none; opacity: 0; pointer-events: none; }
@@ -167,8 +167,9 @@
 #hero .panel .opt .tg { position: absolute; top: 9px; left: 10px; font: 600 9px/1 "JetBrains Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--holo); }
 #hero .panel .opt.ke .tg { color: var(--gold); }
 
-#hero .toast { position: absolute; z-index: 6; left: 50%; bottom: 15vh; text-align: center; pointer-events: none; opacity: 0; transform: translate3d(-50%, 12px, 0); transition: opacity .4s ease, transform .5s var(--ease-out); will-change: transform, opacity; backface-visibility: hidden; }
-#hero .toast b { display: block; font: 700 clamp(22px, 2.6vw, 34px)/1 "Syncopate", sans-serif; }
+#hero .toast { position: absolute; z-index: 6; left: 50%; bottom: 15vh; width: max-content; max-width: calc(100vw - 32px); text-align: center; pointer-events: none; opacity: 0; transform: translate3d(-50%, 12px, 0); transition: opacity .4s ease, transform .5s var(--ease-out); will-change: transform, opacity; backface-visibility: hidden; }
+#hero .toast::before { content: ""; position: absolute; z-index: -1; inset: -60% -30%; opacity: .9; background: var(--shade) center / 100% 100% no-repeat; }
+#hero .toast b { display: block; white-space: nowrap; font: 700 clamp(22px, 2.6vw, 34px)/1 "Syncopate", sans-serif; }
 #hero .toast span { display: block; margin-top: 8px; color: var(--gold); }
 #hero .toast.on { opacity: 1; transform: translate3d(-50%, 0, 0); }
 

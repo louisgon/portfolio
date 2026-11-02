@@ -11,6 +11,7 @@ nav .mbtn[aria-expanded="true"] .ic.m { opacity: 0; transform: rotate3d(0, 0, 1,
 .mnav a small { display: block; margin-bottom: 10px; color: var(--holo); font: 600 10px/1 "JetBrains Mono", monospace; letter-spacing: .2em; }
 .mnav.on a { opacity: 1; transform: none; }
 @media (min-width: 861px) { .mnav { display: none; } }
+@media (prefers-reduced-motion: reduce) { .mnav a, nav .mbtn .ic { transform: none !important; transition: opacity .2s ease !important; } }
 nav .logo { display: inline-flex; color: var(--fg); }
 nav .logo svg { width: 20px; height: 25px; transform-origin: 50% 50%; will-change: transform, opacity; backface-visibility: hidden; }
 nav .ro { color: var(--dim); font-size: 11px; letter-spacing: .16em; white-space: nowrap; }

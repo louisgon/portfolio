@@ -16,7 +16,7 @@ export const WEAP: Record<WeapId, { name: string; evo: string; pair: BoostId; pr
 const WD0: Record<WeapId, string> = {
   pulse: 'Auto aims bolts at the nearest enemy',
   wing: 'An escort orbits you and rams enemies',
-  arc: 'Lightning leaps between enemies and cracks armour',
+  arc: 'Lightning leaps between enemies and cracks armor',
   missile: 'A homing pair that bursts on impact',
   nova: 'A ring pulses out and shoves enemies back',
 };

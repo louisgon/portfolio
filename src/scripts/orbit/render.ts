@@ -63,13 +63,14 @@ export function drawEgg() {
   const wA = egg.whisper >= 0 ? clamp(egg.whisper / 0.6) * clamp((4.2 - egg.whisper) / 0.6) : 0, hA = egg.hover;
   if (!G.on && !VP.p && (wA > 0.01 || hA > 0.01) && sy < 0.05) {
     const sw = restW(), sh = restH(), bx = sw * 0.62, by = sh * 0.78, c = 14, a = Math.max(hA, wA * 0.6);
-    ctx.strokeStyle = `rgba(255,207,138,${0.95 * a})`; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.beginPath();
     for (const [ux, uy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const X = rs.x + ux * bx, Y = rs.y + uy * by; ctx.moveTo(X, Y - uy * c); ctx.lineTo(X, Y); ctx.lineTo(X - ux * c, Y); }
-    ctx.stroke();
+    ctx.strokeStyle = `rgba(4,6,13,${0.55 * a})`; ctx.lineWidth = 4; ctx.stroke();
+    ctx.strokeStyle = `rgba(255,207,138,${0.95 * a})`; ctx.lineWidth = 2; ctx.stroke();
     ctx.font = `600 ${V.tall ? 11 : 12}px "JetBrains Mono", monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     const txt = (hA > wA ? (egg.focus ? 'LG-01 · Press Enter to fly' : 'LG-01 · Hold to fly') : input.last === 'touch' ? 'Hold the ship to fly' : 'Hold the ship or Space to fly').toUpperCase().split('').join(String.fromCharCode(8202));
     const ta = Math.max(hA, wA), tw = ctx.measureText(txt).width + 24, ty = rs.y + by + 26;
-    ctx.fillStyle = `rgba(4,6,13,${0.72 * ta})`; ctx.beginPath(); ctx.roundRect(rs.x - tw / 2, ty - 14, tw, 28, 14); ctx.fill();
+    ctx.fillStyle = `rgba(4,6,13,${0.85 * ta})`; ctx.beginPath(); ctx.roundRect(rs.x - tw / 2, ty - 14, tw, 28, 14); ctx.fill();
     ctx.strokeStyle = `rgba(255,207,138,${0.4 * ta})`; ctx.lineWidth = 1; ctx.stroke();
     ctx.fillStyle = `rgba(255,214,150,${ta})`; ctx.fillText(txt, rs.x, ty + 1); ctx.textBaseline = 'alphabetic';
   }

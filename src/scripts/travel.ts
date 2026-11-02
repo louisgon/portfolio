@@ -27,4 +27,4 @@ export async function travel({ y = null, action = null, focus = null, fast = fal
   idle();
 }
 
-export function idle() { TR.busy = false; const nx = TR.next; TR.next = null; if (nx) nx(); }
+export function idle() { TR.busy = false; pend.forEach(revealEl); pend.clear(); const nx = TR.next; TR.next = null; if (nx) nx(); }

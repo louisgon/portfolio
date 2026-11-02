@@ -1,4 +1,4 @@
-import { TR } from './state';
+import { reduce, TR } from './state';
 import { $, clamp, out, sstep, visible } from './util';
 import { revealAt } from './travel';
 
@@ -43,12 +43,12 @@ export const observeStats = () => new IntersectionObserver((es) => es.forEach((e
 
 export function introEntranceTick(now: number) {
   if (visible($('intro'))) { const sn = now - revealAt, en = clamp((innerHeight - $('intro').getBoundingClientRect().top) / innerHeight), a = Math.min(out(clamp(sn / 700)), sstep(0.25, 0.75, en)), c = Math.min(out(clamp((sn - 650) / 800)), sstep(0.55, 1, en));
-    INTRO.ey.style.opacity = String(a); INTRO.ey.style.transform = `translate3d(0, ${(1 - a) * 14}px, 0)`; INTRO.st.style.opacity = String(c); INTRO.st.style.transform = `translate3d(0, ${(1 - c) * 20}px, 0)`; }
+    INTRO.ey.style.opacity = String(a); INTRO.ey.style.transform = `translate3d(0, ${reduce ? 0 : (1 - a) * 14}px, 0)`; INTRO.st.style.opacity = String(c); INTRO.st.style.transform = `translate3d(0, ${reduce ? 0 : (1 - c) * 20}px, 0)`; }
 }
 
 export function introWordsTick(now: number) {
   const ipT = out(clamp((now - revealAt - 150) / 1500)); let ipW = 0;
   if (!wordGeo.length) measureWords();
-  wordGeo.forEach(({ p, g }, j) => { const top = p.getBoundingClientRect().top; words[j].forEach((w, i) => { const k = Math.min(out(clamp((innerHeight * 0.92 - top - g[i][0] * 0.6) / (innerHeight * 0.28) - g[i][1] * 0.5)), ipT); if (i === g.length - 1) ipW = Math.max(ipW, k); const lo = floors[j][i]; w.style.opacity = (lo + k * (1 - lo)).toFixed(3); w.style.transform = `translate3d(0, ${((1 - k) * 28).toFixed(2)}px, 0)`; }); });
-  if (!statsDone && stats.length && !TR.busy && now - revealAt > 700 && (ipW > 0.75 || statsSeen)) { statsDone = true; const t0 = performance.now(); (function tick(n: number) { const k = out(clamp((n - t0) / 1400)); showStats(k); if (k < 1) requestAnimationFrame(tick); })(t0); }
+  wordGeo.forEach(({ p, g }, j) => { const top = p.getBoundingClientRect().top; words[j].forEach((w, i) => { const k = Math.min(out(clamp((innerHeight * 0.92 - top - g[i][0] * 0.6) / (innerHeight * 0.28) - g[i][1] * 0.5)), ipT); if (i === g.length - 1) ipW = Math.max(ipW, k); const lo = floors[j][i]; w.style.opacity = (lo + k * (1 - lo)).toFixed(3); w.style.transform = `translate3d(0, ${reduce ? 0 : ((1 - k) * 28).toFixed(2)}px, 0)`; }); });
+  if (!statsDone && stats.length && !TR.busy && now - revealAt > 700 && (ipW > 0.75 || statsSeen)) { statsDone = true; if (reduce) { showStats(1); return; } const t0 = performance.now(); (function tick(n: number) { const k = out(clamp((n - t0) / 1400)); showStats(k); if (k < 1) requestAnimationFrame(tick); })(t0); }
 }

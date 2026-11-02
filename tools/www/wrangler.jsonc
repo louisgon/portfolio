@@ -1,0 +1,9 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "portfolio-www",
+  "main": "worker.ts",
+  "account_id": "6fde3e98219379e7b9d8373ec590dff3",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "routes": [{ "pattern": "www.louis.gg/*", "zone_name": "louis.gg" }]
+}

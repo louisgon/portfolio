@@ -1,6 +1,6 @@
-# louis.gg next
+# louis.gg
 
-The Space portfolio for `louis.gg`, live at **https://next.louis.gg**. Branch `next` holds it, and every push to `next` deploys it. Work happens on short branches merged into `next` only when Louis says to ship. `main` still serves the 2021 site through GitHub Pages until a cutover, which happens only on Louis's word.
+The Space portfolio, repo `louisgon/portfolio`, live at **https://louis.gg** from `main` and previewed at **https://next.louis.gg** from `next`. Every push to either branch deploys it. Work happens on short branches merged into `next`, and `next` reaches `main` only when Louis says to ship. The 2021 site is archived as the `legacy-2021` tag and branch.
 
 The site is a static Astro project in plain strict TypeScript with bun and no UI framework. One page holds a hero drawn on its own 2D canvas with a hidden game, a three.js starfield, Lenis scrolling and a single frame loop. three.js draws the starfield only.
 
@@ -18,7 +18,7 @@ The site is a static Astro project in plain strict TypeScript with bun and no UI
 | `src/scripts/orbit/` | The hero and its hidden game, hooked into `main.ts` as `initOrbit` and `orbitTick`. The resting hero ships with `main.ts` and the game is its own chunk. Resting side, `index.ts` runs the frame, the boost, the camera, the rest layout, the hand over from the painted picture to the canvas and `loadGame`, `core.ts` holds the shared state (including `game`, the loaded game chunk, and `T`, the test state), the seeded random sources (one for the simulation, reseeded every run, and one for visuals), the enemy types, the three factions and the capital timing, `art.ts` the resting textures and the ship light layers, `backdrop.ts` the planet scene (its limb curve, drifting haze, the moon layer that keeps moons clear of the copy, the breathing sun and the crossfade when the painting swaps), `paint.ts` the painting and ship analysis (sun, limb, edge curve, moon donors and colour offsets, the bright sky mask and the engine nozzles), which `bun run paint` runs in Chromium on every built painting and ship file and writes to `src/lib/paint.json` keyed by file name, so a phone never reads the painting's pixels while it loads (an unknown file falls back to the same analysis at runtime), `hud.ts` the HUD tick, the prioritised message queue and its lane, `input.ts` the controls, `render.ts` the resting ship, the Easter egg cues and the charge ring, and `store.ts` the best time. Game side, `play.ts` is the chunk's entry, `sprites.ts` holds the game textures, the faction palettes, the star tiles and the sprite caches, `draw.ts` the top down ship, enemies, effects, the space world, the mouse pointer marker and the damage rim cue, `world.ts` the pooled particles, the enemy list and the spatial grid, `enemies.ts` spawning, the capital ships, faction switches and heavy separation, `weapons.ts` the five weapons, six boosts and XP, `upgrades.ts` the level and cache choices, `cards.ts` the build row, pick confirmations, the pause status and the cards as modal dialogs, and `flight.ts` start, landing and hits with their rim cue. `test.ts` holds the hooks only a test build compiles |
 | `src/styles/` | Global CSS split by section, imported by `Base.astro` in cascade order, with the self hosted font faces first in `fonts.css` |
 | `src/assets/` | Source images, one WebP each, with the hero art in `hero/`. The build writes WebP at quality 85 everywhere and AVIF at quality 60 for the two hero backgrounds, which a `picture` in `Hero.astro` serves so each device loads only the one it needs. `src/lib/widths.ts` lists the one smaller width some images also get. The planets (336) and the portrait (600) offer it through `srcset`, and the tall hero art (960) goes only to screens of at most 500 by 860 at 1.8 dppx or less, which it still covers pixel for pixel, so every 2x and 3x phone keeps the full painting |
-| `public/_headers` | Copied to `dist`, sets `X-Robots-Tag: noindex` |
+| `public/` | Copied to `dist` as is. Holds `resume.pdf`, kept from the 2021 site so its old link still works |
 | `tools/parity/` | The parity harness (Playwright) |
 | `tools/hero/` | Playwright checks for the hero and its game |
 | `tools/paint/` | `bun run paint`, which builds the site and regenerates `src/lib/paint.json` |
@@ -29,7 +29,8 @@ The site is a static Astro project in plain strict TypeScript with bun and no UI
 
 ```sh
 bun run dev            # astro dev
-bun run build          # dist/ for the live site, noindex meta added
+bun run build          # dist/ for next.louis.gg, unindexed
+SITE_INDEX=on bun run build   # dist/ for louis.gg, indexed
 bun run build:review   # dist/ with the Review tab
 bun run check          # astro check, strict TypeScript
 bun run preview        # build, then wrangler dev
@@ -62,8 +63,8 @@ Scenarios marked `fresh` cover behaviour the baseline does not have (direct case
 - Nothing in `<head>` may block rendering, and the first frame on a phone must stay cheap. Chrome treats a font preload in the head as render blocking, so the font preloads sit at the top of `<body>` and the faces they load use `font-display: block`. On touch screens `body` is `content-visibility: hidden` for its first frame (the `hold` animation in `state.css`), so the first commit is a near empty frame. Without both, PageSpeed mobile stalls one or two seconds before its first paint in a large share of runs (see "First frame stall, root cause" in HANDOFF.md). Check any head or first frame change with `bun tools/psi/run.ts --runs 10 --form mobile` and read the `fp` column.
 - `boot.ts` adds the Cloudflare Web Analytics beacon itself, in live builds only, once the load event has fired and the first contentful paint has landed, then on idle. Loading it before the first paint put a third party request inside Lighthouse's LCP estimate.
 - Deploys go to an assets-only Worker named `louisgg-next` with the custom domain `next.louis.gg`. Cloudflare manages its DNS record.
-- `.github/workflows/deploy-next.yml` runs on every push to `next` and from the Run workflow button. It installs with the frozen lockfile, then runs `check`, `build` and the parity `output` check before `wrangler deploy`, using the `CLOUDFLARE_API_TOKEN` repository secret. The account ID sits in `wrangler.jsonc`.
-- The live build stays unindexed until cutover, through both the `noindex` meta and the `X-Robots-Tag` header.
+- `.github/workflows/deploy.yml` runs on every push to `main` and `deploy-next.yml` on every push to `next`, both also from the Run workflow button. Each installs with the frozen lockfile, then runs `check`, `build` and the parity `output` check before `wrangler deploy`, using the `CLOUDFLARE_API_TOKEN` repository secret. The `main` deploy builds with `SITE_INDEX=on`, checks with `--index` and deploys the `portfolio` Worker on louis.gg and www.louis.gg. The `next` deploy uses `--env next`, the `louisgg-next` Worker on next.louis.gg. The account ID sits in `wrangler.jsonc`.
+- A build is unindexed unless `SITE_INDEX=on`, through both the `noindex` meta and an `X-Robots-Tag` header the `spaceless-css` step writes to `dist/_headers`. Only the `main` deploy sets it. The `output` check fails a build that is indexed without `--index`, or unindexed with it.
 - `REVIEW=on` sets `__REVIEW__`. The Review tab renders only then, and the `#review` alias points `main.ts` at `review.ts` (which brings `review.css`) or at an empty module, so the live build carries none of it.
 - CSS minification is off because Lightning CSS rewrites `translate3d`, `scale3d` and `rotate3d` into 2D forms. The `output` check guards it. Instead the `spaceless-css` step in `astro.config.ts` strips comments and whitespace from the inlined styles after the build, leaving strings and `url()` untouched, so the parsed rules stay identical.
 - Keep the order of the ticks in `main.ts`. Many modules read values another module wrote earlier in the same frame.
@@ -134,4 +135,4 @@ Scenarios marked `fresh` cover behaviour the baseline does not have (direct case
 
 ### Process
 - Verify visually and by recording. Record with Playwright video, extract frames with ffmpeg, score regional brightness blips (a 4x4 tile differing from the mean of its two neighbours), and check every peak by eye because fast motion gives false positives.
-- Deploy to next.louis.gg only when Louis asks. Cut over louis.gg only on his word.
+- Deploy to next.louis.gg only when Louis asks, and push to `main`, which deploys louis.gg, only on his word.

@@ -802,7 +802,7 @@
 
 ## Audit fixes (2026-11-01)
 
-Codex and Claude audited next.louis.gg independently, a third pass verified 26 findings, and Louis chose to fix all of them. The evidence lives outside the repo in `~/Github/louisgon/louisgon.github.io-audit/2026-11-01/`.
+Codex and Claude audited next.louis.gg independently, a third pass verified 26 findings, and Louis chose to fix all of them. The evidence lives outside the repo in `~/Github/louisgon/portfolio-audit/2026-11-01/`.
 
 - The mobile menu makes everything but the nav and itself inert while open, and closes itself when the window crosses 860px.
 - The scramble copy is inert, and each stand in glyph is stretched with `scale3d` to the width of the letter it replaces.
@@ -815,3 +815,7 @@ Codex and Claude audited next.louis.gg independently, a third pass verified 26 f
 - The tall haze is scaled up to 9 by 15 before inlining. In Playwright WebKit the blocks are finer and softer but still visible, so check it on a real iPhone.
 - Case headers carry a dark text shadow over bright planets, the toast keeps the time on one line over a shade, and the phone planet cap keeps Kioti in line with its siblings.
 - Not changed. The Calibrate title stays Frontend Developer, since it is a job title on record.
+
+## Cutover (2026-11-02)
+
+The site moved from next.louis.gg to louis.gg and the repo from `louisgon/louisgon.github.io` to `louisgon/portfolio`. The 2021 GitHub Pages site is archived as the `legacy-2021` tag and branch, and `main` took next's tree through a `-s ours` merge, so no history was rewritten. Indexing is a build switch, `SITE_INDEX=on`, set only by the `main` deploy, so a preview can never be indexed by accident. `resume.pdf` came over from the old site. Locally the checkout is `~/Github/louisgon/portfolio` and worktrees live under `~/Worktrees/louisgon/portfolio/`.

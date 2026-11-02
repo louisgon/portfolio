@@ -1,13 +1,22 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "louisgg-next",
+  "name": "portfolio",
   "account_id": "6fde3e98219379e7b9d8373ec590dff3",
   "compatibility_date": "2026-10-01",
-  "routes": [{ "pattern": "next.louis.gg", "custom_domain": true }],
+  "routes": [
+    { "pattern": "louis.gg", "custom_domain": true },
+    { "pattern": "www.louis.gg", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
   },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  "env": {
+    "next": {
+      "name": "louisgg-next",
+      "routes": [{ "pattern": "next.louis.gg", "custom_domain": true }]
+    }
+  }
 }

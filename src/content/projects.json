@@ -13,8 +13,8 @@
     ],
     "fact": "A ministry site built on WordPress, with devotions, articles, Bible studies, videos and a searchable resource library.",
     "story": {
-      "brief": "Anne Graham Lotz’s ministry needed a fast site for devotions, articles, Bible studies and video teaching, with a searchable resource library.",
-      "did": "At Goodfolks, I set up the Astro app for Cloudflare Workers and built key pages, the resource library and Algolia search. I added WordPress editing and Spanish translation tools, plus content caching that refreshes when editors publish."
+      "brief": "Anne Graham Lotz’s ministry publishes articles, videos and study resources. It needed a fast site where readers could find them.",
+      "did": "The site runs on headless WordPress with an Astro front end on Cloudflare Workers. I engineered the data layer over the WordPress REST API, the reusable block system, a caching system that purges by tag on publish, multilingual routing, Algolia search, gated content and the deploy pipeline."
     }
   },
   {
@@ -31,8 +31,8 @@
     ],
     "fact": "A Java company’s WordPress marketing site, with five years of work and a Craft CMS and Astro rebuild underway.",
     "story": {
-      "brief": "Azul builds and supports Java for large companies, and its marketing team regularly publishes new pages.",
-      "did": "With the Goodfolks team, I’ve built and maintained Azul’s WordPress site since 2022. I’m now building its Craft CMS and Astro replacement and moving WordPress content into Craft."
+      "brief": "Azul builds and supports Java for large companies. For five years the focus has been its WordPress marketing site, from major campaigns to everyday upkeep. That work continues while a Craft CMS and Astro rebuild is underway.",
+      "did": "Since 2022, I’ve developed pages and features for Azul’s WordPress site alongside other developers. I’m now building its Craft CMS and Astro replacement with the team, including the content move from WordPress."
     }
   },
   {
@@ -49,8 +49,8 @@
     ],
     "fact": "A paid news site rebuilt from WordPress in Rails, with stories, newsletters, podcasts and subscriptions.",
     "story": {
-      "brief": "Puck publishes news, newsletters and podcasts for paying subscribers. Its move from WordPress to Rails required new reader pages, subscription signup and account pages.",
-      "did": "At Goodfolks, I built most of Puck’s Rails front end, from pages for stories, newsletters, podcasts, search and authors to subscription signup, email sign in, consent and the header. I built shared page components with ViewComponent and interactions with Stimulus."
+      "brief": "Puck is a subscription news company covering Wall Street, Washington, A.I. and Hollywood. The move from WordPress to a Rails codebase shared with Air Mail meant rebuilding the entire site readers and subscribers use.",
+      "did": "I led Puck’s front end through its move from WordPress to Rails, across the news, join, sign in and admin sites. That includes the shared ViewComponent library, Stimulus interactions and the pages for stories, newsletters, podcasts and search."
     }
   },
   {
@@ -65,10 +65,10 @@
       "Stimulus",
       "PostgreSQL"
     ],
-    "fact": "I have built across Air Mail’s Rails site since 2023, from navigation and the arts calendar to city guides, subscription pages and the shop front end.",
+    "fact": "A weekly publication on Rails, with news and culture stories, travel guides, arts events, a shop and paid subscriptions.",
     "story": {
-      "brief": "Air Mail is a weekly publication with an arts calendar, city guides, a shop and paid subscriptions, all running on one Rails site.",
-      "did": "I built navigation for the magazine, beauty, arts and shopping sections, the arts calendar and its filters, city guides, subscription pages and signup layouts, and the shop front end from collections and product pages to gift guides and the shopping bag. I also built search, light and dark themes, a word game and a tournament bracket."
+      "brief": "Air Mail sends readers a new issue every week, and its site also covers travel, the arts and shopping. The site has to make all of it feel like one publication.",
+      "did": "Since 2023, I’ve developed most of Air Mail’s Rails front end with the team, using ViewComponent and Stimulus across navigation, section pages, search, subscriptions and the shop. My work also includes sitewide light and dark themes, a Connections inspired word game and a tournament bracket."
     }
   },
   {

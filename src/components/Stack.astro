@@ -20,7 +20,6 @@ import { nn } from '../lib/sections';
           <div class="f fr" style="transform:none">
             <div class="hdr"><span>SYS {nn(n + 1)}</span><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={c.ic} /></span></div>
             <h3>{c.t}</h3>
-            <div class="ct">{nn(c.items.length)} systems online</div>
             <p class="d">{c.d}</p>
             <ul>{c.items.map((x, i) => <li style={`--i:${i}`}><i></i><span>{x}</span></li>)}</ul>
             <div class="shine"></div>

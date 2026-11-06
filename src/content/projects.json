@@ -11,11 +11,11 @@
       "Cloudflare Workers",
       "Algolia"
     ],
-    "fact": "Built Anne Graham Lotz’s site front to back, Astro on Cloudflare Workers over headless WordPress, with a resource library, translations and an edge cache.",
+    "fact": "I built across Anne Graham Lotz’s new site, from Astro pages and resource search to WordPress editing tools and content caching.",
     "story": {
-      "brief": "Anne Graham Lotz’s ministry publishes daily devotions, articles, Bible studies and video teaching in several languages, and needed one fast site to hold all of it.",
-      "did": "I set up the Astro app on Cloudflare Workers and the headless WordPress theme behind it, then built the pages and blocks, a resource library with nested filters editors control, Algolia search, translation through Polylang and DeepL, and a Durable Object cache that batches reads and refreshes stale pages in the background.",
-      "result": "Editors organize resources and compose pages from blocks, readers find studies and devotions in their own language, and pages stay fast as content changes."
+      "brief": "Anne Graham Lotz’s ministry publishes devotions, articles, Bible studies and video teaching, and needed one fast site to bring them together.",
+      "did": "I set up the Astro app on Cloudflare Workers, built key pages, the resource library and search, then added WordPress editing and Spanish translation tools. I also built content caching that updates when editors publish.",
+      "result": "Editors organize resources and compose pages, and readers find studies, articles and videos across one site."
     }
   },
   {
@@ -33,7 +33,7 @@
     "fact": "Five years building Azul’s site, and now rebuilding it from the ground up on Craft CMS and Astro.",
     "story": {
       "brief": "Azul builds and supports Java for large companies, and its marketing team is always shipping something new.",
-      "did": "I have built and looked after Azul’s WordPress site since 2022. Now I am rebuilding it from scratch on Craft CMS and Astro and moving all of its content across, in six languages.",
+      "did": "I have built and looked after Azul’s WordPress site since 2022. Now I am rebuilding it from scratch on Craft CMS and Astro and moving its content into the new site.",
       "result": "The team keeps shipping on today’s site while the new one comes together from the same content."
     }
   },
@@ -49,11 +49,11 @@
       "Stimulus",
       "Vite"
     ],
-    "fact": "Front end across Puck’s move from WordPress to Rails, from the reader site and join flow to sign in, Puck Pro and the component library behind them.",
+    "fact": "I built Puck’s reader site, subscription flow and shared components as it moved from WordPress to Rails.",
     "story": {
-      "brief": "Puck publishes news, newsletters and podcasts for paying subscribers. Its move from WordPress to Rails split the site into engines for reading, joining, accounts and Puck Pro.",
-      "did": "I helped carry the old site into the new app, then built the front end across every engine, from the home, newsletter, podcast, search and author templates to the join flow, email link sign in, consent and the header, all on a shared ViewComponent library with a workbench for visual review.",
-      "result": "Four engines, one front end. Readers browse, subscribe and sign in without seeing the seams, and new pages come together from components the team has already reviewed."
+      "brief": "Puck publishes news, newsletters and podcasts for paying subscribers. Its move from WordPress to Rails needed the reader site, subscriptions and accounts to feel like one site.",
+      "did": "I built pages for stories, newsletters, podcasts, search and authors, then worked on the join flow, email sign in, consent and the header. A shared component library lets the team review new pages before they go live.",
+      "result": "The reader site and join flow share a consistent design, and the team can build new pages from components it has already reviewed."
     }
   },
   {
@@ -68,10 +68,10 @@
       "Stimulus",
       "PostgreSQL"
     ],
-    "fact": "Built across Air Mail’s Rails site since 2022, from the navigation and Arts Intel to city guides, subscriptions and the full shopping experience.",
+    "fact": "I have built across Air Mail’s Rails site since 2023, from navigation and the arts calendar to city guides, subscription pages and the shop front end.",
     "story": {
       "brief": "Air Mail is a weekly publication with an arts calendar, city guides, a shop and paid subscriptions, all running on one Rails site.",
-      "did": "I built the navigation across the magazine, beauty, arts and shopping sections, the Arts Intel calendar and its filters, city guides, subscription pages and checkout steps, and the shop from collections and product pages to gift guides and the shopping bag. I also built search, light and dark themes, and interactive features like a word game and a tournament bracket.",
+      "did": "I built navigation for the magazine, beauty, arts and shopping sections, the arts calendar and its filters, city guides, subscription pages and signup layouts, and the shop front end from collections and product pages to gift guides and the shopping bag. I also built search, light and dark themes, a word game and a tournament bracket.",
       "result": "Readers move between the magazine, the arts calendar, subscriptions and the shop on one consistent site, and new editorial formats ship on shared components."
     }
   },
@@ -90,8 +90,8 @@
     "fact": "Built Esses Magazine’s reader site on Astro and Craft CMS, from issues and stories to the paywall, Stripe checkout and reader accounts.",
     "story": {
       "brief": "Esses is a print and digital magazine about the world of Grand Prix racing, and it needed a reader site that sells subscriptions as well as it tells stories.",
-      "did": "I built the Astro front end on Cloudflare Workers against Craft CMS, with pages built from blocks, issues with covers and tables of contents, a metered paywall, email first sign in, Stripe checkout through Craft Commerce and an account area for billing, shipping and subscriptions, plus a cache that clears itself when editors publish.",
-      "result": "Readers move from a free story to a subscription and manage it themselves, and editors publish without waiting on a cache."
+      "did": "I built pages for issues and stories, a limit on free reads, email sign in, Stripe checkout, and an account area for billing, shipping and subscriptions. I also built a content cache that updates when editors publish.",
+      "result": "Readers can go from a free story to a subscription and manage their account, while editors see new stories appear as soon as they publish."
     }
   },
   {
@@ -106,11 +106,11 @@
       "GSAP",
       "Vite"
     ],
-    "fact": "Rebuilt Perry Weather’s WordPress site around interactive components, from a storm demo that plays as you scroll to pricing and a partner directory.",
+    "fact": "I built the interactive side of Perry Weather’s WordPress redesign, from a storm demo that plays as you scroll to pricing and partner search.",
     "story": {
       "brief": "Perry Weather needed a site that explains its weather safety products clearly and gives its team flexible pages to publish with.",
-      "did": "I built the interactive components across the site, from a product demo that turns from calm to storm as you scroll to draggable pricing cards, story slideshows and search for partners and resources. Along the way I moved the old components to Twig and tidied 39 blocks into one structure.",
-      "result": "The team builds pages from one block library, visitors find what they need in a few keystrokes, and video and forms load only when needed."
+      "did": "I built the scroll controlled storm demo, pricing cards, story slideshows and search for partners and resources. I also rebuilt older page sections so editors could create pages from one consistent set of tools.",
+      "result": "Editors build pages from shared sections, and visitors can compare products and find partners without digging through long pages."
     }
   },
   {
@@ -125,10 +125,10 @@
       "JavaScript",
       "Vite"
     ],
-    "fact": "Built Kioti’s Craft CMS site from the first commit, with model comparison, filters fed by the product API, owner manuals and reusable blocks.",
+    "fact": "I built Kioti’s Craft CMS site from its first commit, with model comparisons, product filters, owner manuals and flexible pages editors can update.",
     "story": {
       "brief": "Kioti sells tractors, mowers and utility vehicles, and buyers need to narrow a large range and compare models before they visit a dealer.",
-      "did": "I set up the Craft site and built the product pages, comparison tables that update as you choose, filters driven by the product API including price and size, owner manual browsing, and the blocks editors use to build pages.",
+      "did": "I set up the Craft site and built product pages, comparisons that update as buyers choose, filters using details such as price and power, owner manual browsing, and reusable page sections for editors.",
       "result": "Buyers narrow the range, compare models side by side and find the right manual, and editors build pages without needing a developer."
     }
   },

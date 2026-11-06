@@ -26,14 +26,13 @@ const sizes = '(max-width: 860px) clamp(84px, 24vw, 112px), clamp(240px, 27vw, 4
           <div class="hud"></div>
           <div class="edge"></div>
           <div class="scan"></div>
-          <div class="tag" aria-hidden="true"><b>DEST {nn(i + 1)}</b><span>{new URL(p.url).hostname.replace(/^www\./, '')}</span></div>
+          <div class="tag" data-nosnippet aria-hidden="true"><b>DEST {nn(i + 1)}</b><span>{new URL(p.url).hostname.replace(/^www\./, '')}</span></div>
         </a>
         <div class="rv">
-          <div class="num mono" aria-hidden="true">{nn(i + 1)} / {nn(projects.length)}</div>
+          <div class="num mono" data-nosnippet aria-hidden="true">{nn(i + 1)} / {nn(projects.length)}</div>
           <h3 class="disp" id={`pt${i}`}><a href={workURL(p.id)} data-case>{p.title}</a></h3>
           <div class="team mono">{p.team}</div>
           <p>{p.fact}</p>
-          <div class="stack">{p.stack.map((x) => <span>{x}</span>)}</div>
           <div class="acts">
             <a class="btn sm" href={workURL(p.id)} data-case>Case study</a>
             <a class="btn ghost sm" href={p.url} target="_blank" rel="noopener">Visit site<span class="sr"> (opens in a new tab)</span></a>

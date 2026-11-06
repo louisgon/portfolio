@@ -44,7 +44,9 @@
 @media (max-width: 860px) { .traj { display: none; } }
 .proj .pic .hud, .proj .pic::after { transition: opacity .5s var(--ease-out); }
 .proj .pic .tag { transition: opacity .45s var(--ease-out), transform .55s var(--ease-out); will-change: transform, opacity; backface-visibility: hidden; }
-.flyer.go .tag { opacity: 0; transform: translate3d(0, 100%, 0); transition: opacity .3s var(--ease-io), transform .32s cubic-bezier(.4, 0, 1, 1); }
+.flyer.go .tag { opacity: 0; transform: translate3d(0, 100%, 0); transition: opacity .3s var(--ease-io), transform .32s var(--ease-io); }
+.proj .pic.land .tag { opacity: 0; transform: translate3d(0, 100%, 0); }
+.proj .pic.land .hud, .proj .pic.land::after { opacity: 0; }
 .proj a.pic { display: block; }
 .proj h3 a { color: inherit; text-decoration: none; }
 .proj .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }

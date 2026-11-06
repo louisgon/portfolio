@@ -1,7 +1,8 @@
 :root { --bg: #04060d; --bg2: #0a1226; --fg: #eaf0ff; --dim: #93a3c6; --holo: #8fd3ff; --gold: #ffcf8a; --line: rgb(143 211 255 / 18%); color-scheme: dark; --ease-out: cubic-bezier(.2, .8, .2, 1); --ease-io: cubic-bezier(.4, 0, .2, 1); --ease-pop: cubic-bezier(.2, 1.4, .4, 1); }
 * { box-sizing: border-box; }
 html { background: var(--bg); scrollbar-gutter: stable; -webkit-tap-highlight-color: transparent; }
-html.case-lock { scrollbar-gutter: auto; overflow: hidden; }
+html.case-lock { touch-action: none; }
+@media (hover: hover) and (pointer: fine) { html.case-lock { scrollbar-gutter: auto; overflow: hidden; } }
 .ic { width: 1.15em; height: 1.15em; flex: none; }
 body { margin: 0; background: transparent; color: var(--fg); font: 17px/1.6 "Inter Tight", system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 html.lenis, html.lenis body { height: auto; }

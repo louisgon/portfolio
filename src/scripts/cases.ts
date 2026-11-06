@@ -11,8 +11,9 @@ import { orbit } from './planets';
 type Step = 'push' | 'replace' | null;
 
 const DOC = performance.timeOrigin;
-let caseI = 0, fillI = -1, fillP: Promise<unknown> | null = null, caseRet: HTMLElement | null = null, caseIO: IntersectionObserver, direct = false;
+let caseI = 0, fillI = -1, fillP: Promise<unknown> | null = null, caseRet: HTMLElement | null = null, caseIO: IntersectionObserver, direct = false, flyI = -1, flyY = 0, flyW = 0;
 const bgInert = new Map<Element, boolean>();
+const backY = (proj: Element) => (caseI === flyI && innerWidth === flyW ? flyY : centerY(proj));
 
 function route(i: number | null, step: Step) {
   const m = pageMeta(i === null ? undefined : PROJECTS[i]), c = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')!;
@@ -31,12 +32,13 @@ const caseReturn = (pic?: HTMLElement) => (caseRet && caseRet.isConnected && cas
 function showCase(i: number, filled?: boolean) { if (!filled) fillCase(i); fillI = -1; $('case').classList.add('on'); document.body.classList.add('case-open'); $('case').scrollTop = 0; document.documentElement.classList.add('case-lock'); caseLife(); setBgInert(true); $('case').setAttribute('aria-label', `${PROJECTS[i].title} case study`); }
 function hideCase() { $('case').classList.remove('on'); document.body.classList.remove('case-open'); document.documentElement.classList.remove('case-lock'); setBgInert(false); }
 function openCase(i: number, step: Step) { if (TR.busy) { TR.next = () => openCase(i, step); return; } route(i, step); travel({ fast: $('case').classList.contains('on'), action: () => fillCase(i).then(() => showCase(i, true)) }).then(() => land($('caseIn').querySelector<HTMLElement>('.back')!, $('case'))); }
-function closeCase() { if (TR.busy) { TR.next = closeCase; return; } const r = caseReturn(); travel({ focus: r, action: () => { hideCase(); if (r) scrollToY(centerY(r.closest('.proj')!)); } }); }
+function closeCase() { if (TR.busy) { TR.next = closeCase; return; } const r = caseReturn(); travel({ focus: r, action: () => { hideCase(); if (r) scrollToY(backY(r.closest('.proj')!)); } }); }
 function ghostAt(r: DOMRect, src: string, rad: number, tag?: Element | null) { const g = document.createElement('div'); g.className = 'flyer'; g.setAttribute('aria-hidden', 'true'); g.innerHTML = `<img src="${src}" alt="">`; if (tag) g.append(tag.cloneNode(true)); Object.assign(g.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, borderRadius: `${rad}px`, visibility: 'hidden' }); document.body.append(g); return (g.firstChild as HTMLImageElement).decode().catch(() => {}).then(() => g); }
 const FLYE = bez(0.65, 0, 0.2, 1);
 const flyTo = (g: HTMLElement, a: DOMRect, el: HTMLElement, ms: number) => new Promise<void>((res) => { const t0 = performance.now(); (function f(n: number) { const k = Math.min(1, (n - t0) / ms), e = FLYE(k), b = el.getBoundingClientRect(), sc = 1 + (b.width / a.width - 1) * e; g.style.transform = `translate3d(${((b.left - a.left) * e).toFixed(2)}px, ${((b.top - a.top) * e).toFixed(2)}px, 0) scale3d(${sc.toFixed(4)}, ${sc.toFixed(4)}, 1)`; if (k < 1) requestAnimationFrame(f); else res(); })(t0); });
 async function flyCase(i: number, pic: HTMLElement, step: Step) {
   if (TR.busy) return; TR.busy = TR.casing = true; route(i, step); lenis && lenis.stop(); document.documentElement.classList.add('tr-lock');
+  flyI = i; flyY = scrollY; flyW = innerWidth;
   pic.style.transition = 'none'; pic.style.transform = ''; const a = pic.getBoundingClientRect(), [g] = await Promise.all([ghostAt(a, PROJECTS[i].shot, 14, pic.querySelector('.tag')), fillCase(i)]);
   g.style.visibility = ''; pic.style.visibility = 'hidden'; pic.style.transition = ''; S.boost = Math.max(S.boost, 0.6);
   document.body.classList.add('fly-out'); g.classList.add('go');
@@ -51,10 +53,10 @@ async function flyBack(step: Step) {
   if (reduce || !pic || !b || b.bottom < 60 || b.top > innerHeight - 60) { closeCase(); return; }
   TR.busy = true; const g = await ghostAt(b, PROJECTS[caseI].shot, 16); g.style.visibility = ''; shot!.style.visibility = 'hidden';
   $('case').classList.add('leaving'); document.body.classList.add('fly-back');
-  hideCase(); const proj = pic.closest<HTMLElement>('.proj')!; scrollToY(centerY(proj));
+  hideCase(); const proj = pic.closest<HTMLElement>('.proj')!; scrollToY(backY(proj));
   pic.style.transform = ''; proj.querySelectorAll('.rv').forEach(settle);
-  const a = pic.getBoundingClientRect(); pic.style.visibility = 'hidden'; g.style.borderRadius = `${(16 + (14 * b.width) / a.width) / 2}px`;
-  await flyTo(g, b, pic, 800); pic.style.visibility = ''; g.remove(); document.body.classList.remove('fly-back'); $('case').classList.remove('leaving'); pend.forEach(revealEl); pend.clear();
+  const a = pic.getBoundingClientRect(); pic.style.visibility = 'hidden'; pic.classList.add('land'); g.style.borderRadius = `${(16 + (14 * b.width) / a.width) / 2}px`;
+  await flyTo(g, b, pic, 800); pic.style.visibility = ''; g.remove(); void pic.offsetWidth; pic.classList.remove('land'); document.body.classList.remove('fly-back'); $('case').classList.remove('leaving'); pend.forEach(revealEl); pend.clear();
   document.documentElement.classList.remove('tr-lock'); lenis && lenis.start(); land(caseReturn(pic)!, pic.closest<HTMLElement>('.proj')); idle();
 }
 async function fadeBack(step: Step) {
@@ -64,10 +66,26 @@ async function fadeBack(step: Step) {
   document.body.classList.add('fly-back'); document.body.classList.remove('fly-out'); await wait(380); document.body.classList.remove('fly-back', 'fade-back'); $('case').classList.remove('leaving'); pend.forEach(revealEl); pend.clear();
   document.documentElement.classList.remove('tr-lock'); lenis && lenis.start(); land(caseReturn(proj.querySelector<HTMLElement>('.pic')!)!, proj); idle();
 }
+function snapBack() {
+  route(null, null);
+  direct = false;
+  const proj = document.querySelector<HTMLElement>(`.proj[data-i="${caseI}"]`)!;
+  hideCase();
+  scrollToY(backY(proj));
+  proj.querySelectorAll('.rv').forEach(settle);
+  document.documentElement.classList.remove('tr-lock');
+  lenis && lenis.start();
+  land(caseReturn(proj.querySelector<HTMLElement>('.pic')!)!, proj);
+}
 const close = (step: Step) => (direct ? fadeBack(step) : flyBack(step));
 function leave() { if (TR.busy) { TR.next = leave; return; } if (!$('case').classList.contains('on')) return; const ours = history.state?.doc === DOC; close(ours ? null : 'push'); if (ours) history.back(); }
-function sync() {
+function sync(e?: PopStateEvent) {
   if (TR.busy) { TR.next = sync; return; } const i = caseAt(location.pathname), on = $('case').classList.contains('on');
+  // the browser already animated a swipe back, so a second flight would replay over its snapshot
+  if (i < 0 && on && e?.hasUAVisualTransition) {
+    snapBack();
+    return;
+  }
   if (i < 0) { if (on) close(null); else route(null, null); return; }
   if (on) { if (i !== caseI) openCase(i, null); else route(i, null); return; }
   caseRet = null; const pic = document.querySelector<HTMLElement>(`.proj[data-i="${i}"] .pic`)!; if (reduce || !visible(pic)) openCase(i, null); else flyCase(i, pic, null);

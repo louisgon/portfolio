@@ -9,7 +9,10 @@ let keyNav = false;
 
 export function landY(t: HTMLElement) { if (t.id === 'hero') return 0; if (t.id === 'intro') return t.getBoundingClientRect().top + scrollY + Math.max(0, (t.offsetHeight - innerHeight) * 0.5); return t.getBoundingClientRect().top + scrollY - $('nav').offsetHeight - 24; }
 
-export const centerY = (el: Element) => { const r = el.getBoundingClientRect(); return scrollY + r.top + r.height / 2 - innerHeight / 2; };
+export const centerY = (el: Element) => {
+  const r = el.getBoundingClientRect(), m = el.closest<HTMLElement>('main'), shift = m ? m.getBoundingClientRect().top + scrollY - m.offsetTop : 0;
+  return scrollY + r.top - shift + r.height / 2 - innerHeight / 2;
+};
 
 export function land(el: HTMLElement, host?: HTMLElement | null) { const t = keyNav || !host ? el : host; if (!t.hasAttribute('tabindex') && !t.matches('a, button, input')) t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
 

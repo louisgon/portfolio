@@ -3,7 +3,7 @@ import { moonsHTML } from './planets';
 import { nn } from './sections';
 import type { Project } from './site';
 
-const STORY = (s: NonNullable<Project['story']>) => [['The brief', s.brief], ['What I did', s.did], ['The result', s.result]];
+const STORY = (s: NonNullable<Project['story']>) => [['The brief', s.brief], ['What I did', s.did]];
 
 export function caseHTML(projects: Project[], i: number) {
   const p = projects[i], L = projects.length, pi = (i + L - 1) % L, ni = (i + 1) % L;

@@ -12,7 +12,7 @@ const projects = defineCollection({
     url: z.url(),
     stack: z.array(z.string()),
     fact: z.string(),
-    story: z.object({ brief: z.string(), did: z.string(), result: z.string() }).optional(),
+    story: z.object({ brief: z.string(), did: z.string() }).optional(),
   }),
 });
 

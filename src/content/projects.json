@@ -11,7 +11,7 @@
       "Cloudflare Workers",
       "Algolia"
     ],
-    "fact": "A ministry site built on WordPress, with devotions, articles, Bible studies, videos and a searchable resource library.",
+    "fact": "A ministry site on headless WordPress, with devotions, articles, Bible studies, videos and search across all of it.",
     "story": {
       "brief": "Anne Graham Lotz’s ministry publishes articles, videos and study resources. It needed a fast site where readers could find them.",
       "did": "The site runs on headless WordPress with an Astro front end on Cloudflare Workers. I engineered the data layer over the WordPress REST API, the reusable block system, a caching system that purges by tag on publish, multilingual routing, Algolia search, gated content and the deploy pipeline."
@@ -83,10 +83,10 @@
       "Cloudflare Workers",
       "Stripe"
     ],
-    "fact": "Built Esses Magazine’s reader site on Astro and Craft CMS, from issues and stories to the paywall, Stripe checkout and reader accounts.",
+    "fact": "A print and digital Grand Prix magazine built on Astro and headless Craft CMS, with issues, stories, a paywall, Stripe checkout and reader accounts.",
     "story": {
-      "brief": "Esses is a print and digital magazine about the world of Grand Prix racing, and it needed a reader site that sells subscriptions as well as it tells stories.",
-      "did": "I built pages for issues and stories, a limit on free reads, email sign in, Stripe checkout, and an account area for billing, shipping and subscriptions. I also built a content cache that updates when editors publish."
+      "brief": "Esses is a print and digital magazine about the world of Grand Prix racing. It needed a site that tells its stories well and sells subscriptions directly to readers.",
+      "did": "The site runs on headless Craft CMS with an Astro front end on Cloudflare Workers. I engineered the Craft API integration, tiered gated content, the paywall, Stripe checkout, reader accounts and a Durable Object caching system that purges on publish."
     }
   },
   {

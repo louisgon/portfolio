@@ -14,7 +14,7 @@ import '../styles/footer.css';
 import '../styles/case.css';
 import '../styles/state.css';
 import { getSiteData } from '../lib/site';
-import { pageMeta } from '../lib/pages';
+import { BASE, pageMeta } from '../lib/pages';
 import syncopate from '@fontsource/syncopate/files/syncopate-latin-700-normal.woff2?url';
 import interTight from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
 import syncopateExt from '@fontsource/syncopate/files/syncopate-latin-ext-700-normal.woff2?url';
@@ -35,7 +35,15 @@ const page = pageMeta(open === undefined ? undefined : site.projects[open]);
 <title>{page.title}</title>
 <meta name="description" content={page.description}>
 <link rel="canonical" href={new URL(page.path, Astro.site).href}>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-.5 -.5 5 6%27%3E%3Cpath fill=%27%238fd3ff%27 d=%27M1,0H.5L0,.5v4L.5,5h2V4H1ZM2,2.5H4v2L3.5,5H3V3.5H2ZM1.5,0V1H3v.5H4V.5L3.5,0Z%27/%3E%3C/svg%3E">
+<link rel="icon" href={`${BASE}favicon.ico`} sizes="48x48">
+<link rel="icon" href={`${BASE}favicon.svg`} type="image/svg+xml">
+<link rel="apple-touch-icon" href={`${BASE}apple-touch-icon.png`}>
+<meta property="og:type" content="website">
+<meta property="og:title" content={page.title}>
+<meta property="og:description" content={page.description}>
+<meta property="og:url" content={new URL(page.path, Astro.site).href}>
+<meta property="og:image" content={new URL('/og.jpg', Astro.site).href}>
+<meta name="twitter:card" content="summary_large_image">
 <style is:inline id="late" media={open === undefined ? 'not all' : undefined} set:html={lateFonts}></style>
 <script is:inline>history.scrollRestoration = 'manual'; try { const n = performance.getEntriesByType('navigation')[0]; if ((location.hash.length > 1 && location.hash !== '#hero') || (/reload|back_forward/.test(n?.type ?? '') && +(sessionStorage.getItem('space-y') ?? 0) > innerHeight * 0.5)) { document.documentElement.classList.add('landing'); document.getElementById('late')?.removeAttribute('media'); } } catch {}</script>
 <noscript><style>html #hero .bg img { opacity: 1; visibility: visible; }</style></noscript>

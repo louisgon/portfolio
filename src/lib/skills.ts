@@ -2,7 +2,7 @@ export const LOGO = 'M1,0H.5L0,.5v4L.5,5h2V4H1ZM2,2.5H4v2L3.5,5H3V3.5H2ZM1.5,0V1
 
 export const SKILLS = [
   { t: 'Front end', d: 'Fast, accessible interfaces with motion where it helps.', ic: '<path d="M8 6 2 12l6 6M16 6l6 6-6 6M14 4l-4 16"/>', items: ['Astro, React, Vue', 'TypeScript', 'GSAP', 'WebGL, Shaders', 'Sass, Tailwind', 'Accessibility'] },
-  { t: 'Back end', d: 'APIs, data models and moves off legacy systems.', ic: '<rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01M11 6.5h6M11 17.5h6"/>', items: ['Rails, PHP', 'Hono on Workers', 'REST APIs', 'PostgreSQL, MySQL', 'Site migrations', 'Auth, Stripe'] },
+  { t: 'Back end', d: 'APIs, data models and moves off legacy systems.', ic: '<rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01M11 6.5h6M11 17.5h6"/>', items: ['PHP, Rails', 'REST APIs, GraphQL', 'PostgreSQL, MySQL', 'Cloudflare D1', 'Workers KV', 'Durable Objects'] },
   { t: 'CMS', d: 'Content tools built around how editors actually work.', ic: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12M13 13h4M13 17h4"/>', items: ['Craft CMS', 'WordPress', 'Headless setups', 'Editor experience', 'Content models', 'Multi-site'] },
   { t: 'Ship + run', d: 'Deploys, performance and upkeep, year after year.', ic: '<path d="M12 2c3 2.6 4.5 6.2 4.5 10.5L15 18H9l-1.5-5.5C7.5 8.2 9 4.6 12 2Z"/><circle cx="12" cy="10" r="2"/><path d="M9 18l-2.5 3.5M15 18l2.5 3.5M12 18v4"/>', items: ['Cloudflare Workers', 'Vite and Bun', 'DDEV', 'CI and deploys', 'Playwright tests', 'Performance'] },
 ];

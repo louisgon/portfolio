@@ -47,10 +47,10 @@
       "Stimulus",
       "Vite"
     ],
-    "fact": "I built Puck’s reader site, subscription flow and shared components as it moved from WordPress to Rails.",
+    "fact": "A paid news site rebuilt from WordPress in Rails, with stories, newsletters, podcasts and subscriptions.",
     "story": {
-      "brief": "Puck publishes news, newsletters and podcasts for paying subscribers. Its move from WordPress to Rails needed the reader site, subscriptions and accounts to feel like one site.",
-      "did": "I built pages for stories, newsletters, podcasts, search and authors, then worked on the join flow, email sign in, consent and the header. A shared component library lets the team review new pages before they go live."
+      "brief": "Puck publishes news, newsletters and podcasts for paying subscribers. Its move from WordPress to Rails required new reader pages, subscription signup and account pages.",
+      "did": "At Goodfolks, I built most of Puck’s Rails front end, from pages for stories, newsletters, podcasts, search and authors to subscription signup, email sign in, consent and the header. I built shared page components with ViewComponent and interactions with Stimulus."
     }
   },
   {

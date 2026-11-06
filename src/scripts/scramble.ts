@@ -1,7 +1,7 @@
 import { reduce } from './state';
 
 const GLY = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#%&+<>/', THIN = 'I1|!';
-const done = new WeakSet<Element>(), fits = new Map<string, Map<string, string>>();
+const done = new WeakSet<Element>(), fits = new Map<string, Map<string, string>>(), runs = new WeakMap<Element, () => void>();
 const ctx = document.createElement('canvas').getContext('2d')!;
 
 function poolFor(font: string, up: boolean, ch: string) {
@@ -19,6 +19,7 @@ export const undecode = (el: Element) => done.delete(el);
 export function decode(el: HTMLElement, delay = 0) {
   if (reduce || done.has(el)) return; done.add(el);
   const start = () => {
+    runs.get(el)?.();
     const lab = el.textContent!.replace(/\s+/g, ' ').trim(), hadLab = el.hasAttribute('aria-label'); if (!hadLab) el.setAttribute('aria-label', lab);
     const cs = getComputedStyle(el), font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`, up = cs.textTransform === 'uppercase', ls = parseFloat(cs.letterSpacing) || 0;
     const box = el.getBoundingClientRect(), sx = box.width ? el.offsetWidth / box.width || 1 : 1, cells: [HTMLSpanElement, string, string][] = [], gw = new Map<string, number>(), swaps: [ChildNode, Node][] = [];
@@ -50,16 +51,31 @@ export function decode(el: HTMLElement, delay = 0) {
       [...w].forEach((ch, i) => { const c = document.createElement('span'), g = document.createElement('span'); c.style.cssText = `display:inline-block;width:${(ws[i] * total / sum).toFixed(3)}px;text-align:center`; g.textContent = ch; c.append(g); s.append(c); const pool = poolFor(font, up, ch); for (const p of pool + ch) if (!gw.has(p)) gw.set(p, ctx.measureText(up ? p.toUpperCase() : p).width + ls); g.style.cssText = 'display:inline-block;will-change:transform;backface-visibility:hidden'; cells.push([g, ch, pool]); });
     });
     const total = cells.length, t0 = performance.now() + delay, dur = 520 + total * 14;
+    let live = true;
+    const finish = () => {
+      live = false;
+      runs.delete(el);
+      if (float) {
+        stage.remove();
+        el.style.position = pos;
+      }
+      swaps.forEach(([w, n]) => w.replaceWith(n));
+      if (!hadLab) {
+        el.removeAttribute('aria-label');
+      }
+    };
+    runs.set(el, finish);
     (function tick(now: number) {
+      if (!live) {
+        return;
+      }
       const k = (now - t0) / dur;
       cells.forEach(([g, ch, pool], j) => {
         const real = k * 1.35 - (j / total) * 0.9 > 0.45, v = real ? ch : pool[(Math.random() * pool.length) | 0];
         if (g.textContent !== v) { g.textContent = v; g.style.transform = real ? '' : `scale3d(${(gw.get(ch)! / gw.get(v)!).toFixed(3)}, 1, 1)`; }
       });
       if (k < 1) { requestAnimationFrame(tick); return; }
-      if (float) { stage.remove(); el.style.position = pos; }
-      swaps.forEach(([w, n]) => w.replaceWith(n));
-      if (!hadLab) el.removeAttribute('aria-label');
+      finish();
     })(performance.now());
   };
   document.fonts && document.fonts.status !== 'loaded' ? document.fonts.ready.then(start) : start();

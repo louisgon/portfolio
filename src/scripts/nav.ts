@@ -15,7 +15,13 @@ function placeMk() { const a = navLinks.find((l) => l.classList.contains('on')),
   if (!was) { void navMk.offsetWidth; navMk.style.transition = ''; } }
 
 export function setNav(cur: string) { navCur = cur; const id = cur === 'clients' ? 'work' : cur; navAll.forEach((a) => { const on = a.getAttribute('href') === `#${id}`; a.classList.toggle('on', on); if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); }); placeMk();
-  const n = nn(NAVN[cur] ?? 0), el = $('navNum'); if (el.textContent !== n) { el.textContent = n; undecode(el); decode(el); } }
+  const n = nn(NAVN[cur] ?? 0), el = $('navNum'), shown = el.getAttribute('aria-label') ?? el.textContent;
+  if (shown !== n) {
+    el.textContent = n;
+    undecode(el);
+    decode(el);
+  }
+}
 
 export function initNav() {
   navLinks = [...document.querySelectorAll<HTMLAnchorElement>('nav .links a')]; navAll = [...navLinks, ...$('mnav').querySelectorAll('a')]; navMk = $('navMk');

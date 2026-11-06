@@ -5,6 +5,6 @@ export const workURL = (id: string) => `${BASE}work/${id}/`;
 export const slugOf = (path: string) => (path.startsWith(BASE) ? /^work\/([\w-]+)\/?$/.exec(path.slice(BASE.length))?.[1] : undefined);
 
 const NAME = 'Louis Gonzalez';
-const LEAD = 'Senior developer in Dallas, building software since 2013.';
+const LEAD = 'I’m a senior developer in Dallas. I build websites and apps.';
 
-export const pageMeta = (p?: Project) => (p ? { title: `${p.title} case study · ${NAME}`, description: p.fact, path: workURL(p.id) } : { title: `${NAME} · Senior developer, Dallas`, description: LEAD, path: BASE });
+export const pageMeta = (p?: Project) => (p ? { title: `${p.title} case study · ${NAME}`, description: p.fact, path: workURL(p.id) } : { title: `${NAME} · Senior developer in Dallas`, description: LEAD, path: BASE });

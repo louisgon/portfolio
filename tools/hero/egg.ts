@@ -7,7 +7,7 @@ export async function egg(c: Ctx) {
     await p.waitForTimeout(1500);
     c.ok('best line hidden before the first sortie', await p.evaluate(() => document.getElementById('bestLine')!.hidden === true));
     const cue = await p.evaluate(() => document.querySelector('#hero .hint')!.textContent);
-    c.ok('cue says Scroll to launch', cue === 'Scroll to launch', cue);
+    c.ok('cue says Scroll to explore', cue === 'Scroll to explore', cue);
     c.ok('no copy points to the game', await p.evaluate(() => !/hold|fly|game/i.test(document.querySelector('#hero .copy')!.textContent ?? '')));
     await p.mouse.move(200, 700); await p.mouse.down(); await p.waitForTimeout(400); await p.mouse.up(); await p.waitForTimeout(200);
     c.ok('a hold off the ship does not start', !(await playing(p)) && (await st(p)).view === 0);

@@ -11,11 +11,11 @@
       "Cloudflare Workers",
       "Algolia"
     ],
-    "fact": "I built across Anne Graham Lotz’s new site, from Astro pages and resource search to WordPress editing tools and content caching.",
+    "fact": "A ministry site with devotions, articles, Bible studies, videos and a searchable resource library.",
     "story": {
-      "brief": "Anne Graham Lotz’s ministry publishes devotions, articles, Bible studies and video teaching, and needed one fast site to bring them together.",
-      "did": "I set up the Astro app on Cloudflare Workers, built key pages, the resource library and search, then added WordPress editing and Spanish translation tools. I also built content caching that updates when editors publish.",
-      "result": "Editors organize resources and compose pages, and readers find studies, articles and videos across one site."
+      "brief": "Anne Graham Lotz’s ministry needed a fast site for devotions, articles, Bible studies and video teaching, with a searchable resource library.",
+      "did": "At Goodfolks, I set up the Astro app for Cloudflare Workers and built key pages, the resource library and Algolia search. I added WordPress editing and Spanish translation tools, plus content caching that refreshes when editors publish.",
+      "result": "Editors manage pages and resources in WordPress. Readers can search studies, articles and videos, and published changes reach the site without leaving stale content behind."
     }
   },
   {

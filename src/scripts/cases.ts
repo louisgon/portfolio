@@ -2,7 +2,7 @@ import { caseHTML, planetHTML } from '../lib/case';
 import { pageMeta } from '../lib/pages';
 import { caseAt, loadStories, PROJECTS } from './data';
 import { pend, reduce, S, TR } from './state';
-import { $, bez, visible, wait } from './util';
+import { $, bez, clamp, visible, wait } from './util';
 import { centerY, land, lenis, scrollToY } from './scroll';
 import { idle, travel } from './travel';
 import { io, revealEl, settle } from './reveal';
@@ -33,18 +33,34 @@ function showCase(i: number, filled?: boolean) { if (!filled) fillCase(i); fillI
 function hideCase() { $('case').classList.remove('on'); document.body.classList.remove('case-open'); document.documentElement.classList.remove('case-lock'); setBgInert(false); }
 function openCase(i: number, step: Step) { if (TR.busy) { TR.next = () => openCase(i, step); return; } route(i, step); travel({ fast: $('case').classList.contains('on'), action: () => fillCase(i).then(() => showCase(i, true)) }).then(() => land($('caseIn').querySelector<HTMLElement>('.back')!, $('case'))); }
 function closeCase() { if (TR.busy) { TR.next = closeCase; return; } const r = caseReturn(); travel({ focus: r, action: () => { hideCase(); if (r) scrollToY(backY(r.closest('.proj')!)); } }); }
-function ghostAt(r: DOMRect, src: string, rad: number, tag?: Element | null) { const g = document.createElement('div'); g.className = 'flyer'; g.setAttribute('aria-hidden', 'true'); g.innerHTML = `<img src="${src}" alt="">`; if (tag) g.append(tag.cloneNode(true)); Object.assign(g.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, borderRadius: `${rad}px`, visibility: 'hidden' }); document.body.append(g); return (g.firstChild as HTMLImageElement).decode().catch(() => {}).then(() => g); }
+function chromeOn(g: HTMLElement, pic: HTMLElement, scale: number) {
+  const c = document.createElement('div'), veil = document.createElement('i'), hud = pic.querySelector('.hud')!.cloneNode() as HTMLElement, tag = pic.querySelector('.tag')!.cloneNode(true) as HTMLElement;
+  const lit = Number(getComputedStyle(pic.querySelector('.tag b')!).opacity) < 0.5;
+  c.className = 'chrome';
+  c.classList.toggle('lit', lit);
+  veil.className = 'veil';
+  c.style.width = `${pic.offsetWidth}px`;
+  c.style.height = `${pic.offsetHeight}px`;
+  c.style.transform = `scale3d(${scale}, ${scale}, 1)`;
+  c.append(veil, hud, tag);
+  g.append(c);
+  return (shown: number) => {
+    veil.style.opacity = hud.style.opacity = String(shown);
+    tag.style.transform = `translate3d(0, ${((1 - shown) * 100).toFixed(2)}%, 0)`;
+  };
+}
+function ghostAt(r: DOMRect, src: string, rad: number) { const g = document.createElement('div'); g.className = 'flyer'; g.setAttribute('aria-hidden', 'true'); g.innerHTML = `<img src="${src}" alt="">`; Object.assign(g.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, borderRadius: `${rad}px`, visibility: 'hidden' }); document.body.append(g); return (g.firstChild as HTMLImageElement).decode().catch(() => {}).then(() => g); }
 const FLYE = bez(0.65, 0, 0.2, 1);
-const flyTo = (g: HTMLElement, a: DOMRect, el: HTMLElement, ms: number) => new Promise<void>((res) => { const t0 = performance.now(); (function f(n: number) { const k = Math.min(1, (n - t0) / ms), e = FLYE(k), b = el.getBoundingClientRect(), sc = 1 + (b.width / a.width - 1) * e; g.style.transform = `translate3d(${((b.left - a.left) * e).toFixed(2)}px, ${((b.top - a.top) * e).toFixed(2)}px, 0) scale3d(${sc.toFixed(4)}, ${sc.toFixed(4)}, 1)`; if (k < 1) requestAnimationFrame(f); else res(); })(t0); });
+const flyTo = (g: HTMLElement, a: DOMRect, el: HTMLElement, ms: number, onEase: (e: number) => void) => new Promise<void>((res) => { const t0 = performance.now(); (function f(n: number) { const k = Math.min(1, (n - t0) / ms), e = FLYE(k), b = el.getBoundingClientRect(), sc = 1 + (b.width / a.width - 1) * e; g.style.transform = `translate3d(${((b.left - a.left) * e).toFixed(2)}px, ${((b.top - a.top) * e).toFixed(2)}px, 0) scale3d(${sc.toFixed(4)}, ${sc.toFixed(4)}, 1)`; onEase(e); if (k < 1) requestAnimationFrame(f); else res(); })(t0); });
 async function flyCase(i: number, pic: HTMLElement, step: Step) {
   if (TR.busy) return; TR.busy = TR.casing = true; route(i, step); lenis && lenis.stop(); document.documentElement.classList.add('tr-lock');
   flyI = i; flyY = scrollY; flyW = innerWidth;
-  pic.style.transition = 'none'; pic.style.transform = ''; const a = pic.getBoundingClientRect(), [g] = await Promise.all([ghostAt(a, PROJECTS[i].shot, 14, pic.querySelector('.tag')), fillCase(i)]);
+  pic.style.transition = 'none'; pic.style.transform = ''; const a = pic.getBoundingClientRect(), [g] = await Promise.all([ghostAt(a, PROJECTS[i].shot, 14), fillCase(i)]), show = chromeOn(g, pic, 1);
   g.style.visibility = ''; pic.style.visibility = 'hidden'; pic.style.transition = ''; S.boost = Math.max(S.boost, 0.6);
-  document.body.classList.add('fly-out'); g.classList.add('go');
+  document.body.classList.add('fly-out');
   showCase(i, true); const shot = $('caseIn').querySelector<HTMLElement>('.hero-shot')!; shot.classList.add('held', 'shown'); const b = shot.getBoundingClientRect();
   g.style.borderRadius = `${(14 + (16 * a.width) / b.width) / 2}px`; revealEl($('caseIn').querySelector('.chd')!); pend.forEach(revealEl); pend.clear();
-  await flyTo(g, a, shot, reduce ? 300 : 850); shot.classList.remove('held'); g.remove(); pic.style.visibility = ''; document.body.classList.remove('fly-out');
+  await flyTo(g, a, shot, reduce ? 300 : 850, (e) => show(1 - clamp(e / 0.55))); shot.classList.remove('held'); g.remove(); pic.style.visibility = ''; document.body.classList.remove('fly-out');
   land($('caseIn').querySelector<HTMLElement>('.back')!, $('case')); TR.casing = false; idle();
 }
 async function flyBack(step: Step) {
@@ -55,8 +71,8 @@ async function flyBack(step: Step) {
   $('case').classList.add('leaving'); document.body.classList.add('fly-back');
   hideCase(); const proj = pic.closest<HTMLElement>('.proj')!; scrollToY(backY(proj));
   pic.style.transform = ''; proj.querySelectorAll('.rv').forEach(settle);
-  const a = pic.getBoundingClientRect(); pic.style.visibility = 'hidden'; pic.classList.add('land'); g.style.borderRadius = `${(16 + (14 * b.width) / a.width) / 2}px`;
-  await flyTo(g, b, pic, 800); pic.style.visibility = ''; g.remove(); void pic.offsetWidth; pic.classList.remove('land'); document.body.classList.remove('fly-back'); $('case').classList.remove('leaving'); pend.forEach(revealEl); pend.clear();
+  const a = pic.getBoundingClientRect(), show = chromeOn(g, pic, b.width / a.width); show(0); pic.style.visibility = 'hidden'; g.style.borderRadius = `${(16 + (14 * b.width) / a.width) / 2}px`;
+  await flyTo(g, b, pic, 800, (e) => show(clamp(e / 0.9))); pic.style.visibility = ''; g.remove(); document.body.classList.remove('fly-back'); $('case').classList.remove('leaving'); pend.forEach(revealEl); pend.clear();
   document.documentElement.classList.remove('tr-lock'); lenis && lenis.start(); land(caseReturn(pic)!, pic.closest<HTMLElement>('.proj')); idle();
 }
 async function fadeBack(step: Step) {

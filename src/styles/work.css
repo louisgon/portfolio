@@ -44,9 +44,10 @@
 @media (max-width: 860px) { .traj { display: none; } }
 .proj .pic .hud, .proj .pic::after { transition: opacity .5s var(--ease-out); }
 .proj .pic .tag { transition: opacity .45s var(--ease-out), transform .55s var(--ease-out); will-change: transform, opacity; backface-visibility: hidden; }
-.flyer.go .tag { opacity: 0; transform: translate3d(0, 100%, 0); transition: opacity .3s var(--ease-io), transform .32s var(--ease-io); }
-.proj .pic.land .tag { opacity: 0; transform: translate3d(0, 100%, 0); }
-.proj .pic.land .hud, .proj .pic.land::after { opacity: 0; }
+.chrome { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; will-change: transform; backface-visibility: hidden; }
+.chrome .veil { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, transparent 55%, rgb(4 8 20 / 45%)); will-change: opacity; }
+.chrome .hud { inset: 12px 12px 48px; will-change: opacity; }
+.flyer .tag { will-change: transform; backface-visibility: hidden; }
 .proj a.pic { display: block; }
 .proj h3 a { color: inherit; text-decoration: none; }
 .proj .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
@@ -56,10 +57,11 @@
 .proj .pic .scan { bottom: auto; height: 42%; background: linear-gradient(180deg, rgb(143 211 255 / 0%), rgb(143 211 255 / 10%) calc(100% - 1px), rgb(190 232 255 / 95%) calc(100% - 1px)); transform: translate3d(0, -100%, 0); }
 .proj .pic:focus-visible { border-radius: 14px; }
 .proj:has([data-case]:focus-visible) .pic .edge { opacity: 1; }
-.proj .pic .tag b, .proj .pic .tag::before { display: block; transition: opacity .4s var(--ease-out), transform .5s var(--ease-out); will-change: transform, opacity; backface-visibility: hidden; }
+.proj .pic .tag b, .proj .pic .tag::before, .flyer .tag b, .flyer .tag::before { display: block; will-change: transform, opacity; backface-visibility: hidden; }
+.proj .pic .tag b, .proj .pic .tag::before { transition: opacity .4s var(--ease-out), transform .5s var(--ease-out); }
 .proj .pic .tag::before, .flyer .tag::before { content: "Open case"; position: absolute; left: 20px; top: 12px; color: var(--fg); opacity: 0; transform: translate3d(0, 150%, 0); }
-.proj:has([data-case]:focus-visible) .pic .tag b, .flyer .tag b { opacity: 0; transform: translate3d(0, -150%, 0); }
-.proj:has([data-case]:focus-visible) .pic .tag::before, .flyer .tag::before { opacity: 1; transform: none; }
+.proj:has([data-case]:focus-visible) .pic .tag b, .chrome.lit .tag b { opacity: 0; transform: translate3d(0, -150%, 0); }
+.proj:has([data-case]:focus-visible) .pic .tag::before, .chrome.lit .tag::before { opacity: 1; transform: none; }
 @media (hover: hover) and (pointer: fine) {
   .proj:has([data-case]:hover) .pic .edge { opacity: 1; }
   .proj:has([data-case]:hover) .pic .scan { animation: scan 1s var(--ease-io) both; }

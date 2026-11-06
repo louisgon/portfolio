@@ -39,5 +39,4 @@ export function busTick(now: number) {
   bctx.lineWidth = 1; bctx.strokeStyle = 'rgba(143,211,255,.22)'; bctx.beginPath(); bctx.moveTo(x0, y); bctx.lineTo(x1, y); xs.forEach(([x]) => { bctx.moveTo(x, 0); bctx.lineTo(x, y); }); bctx.stroke();
   xs.forEach(([x, hv]) => { bctx.fillStyle = `rgba(${hv > 0.3 ? '255,207,138' : '143,211,255'},${0.5 + hv * 0.5})`; bctx.beginPath(); bctx.arc(x, y, 3 + hv * 2, 0, 6.283); bctx.fill(); if (hv > 0.05) { bctx.strokeStyle = `rgba(255,207,138,${hv})`; bctx.beginPath(); bctx.moveTo(x, 0); bctx.lineTo(x, y); bctx.stroke(); } });
   const t = now / 1000; for (let k = 0; k < 3; k++) { const u = ((t * 0.12 + k / 3) % 1), px = x0 + (x1 - x0) * u; const g = bctx.createLinearGradient(px - 60, 0, px, 0); g.addColorStop(0, 'rgba(143,211,255,0)'); g.addColorStop(1, 'rgba(200,235,255,.9)'); bctx.strokeStyle = g; bctx.lineWidth = 1.5; bctx.beginPath(); bctx.moveTo(Math.max(x0, px - 60), y); bctx.lineTo(px, y); bctx.stroke(); }
-  bctx.fillStyle = 'rgba(207,234,255,.55)'; bctx.font = '400 10px "JetBrains Mono", monospace'; bctx.fillText('SYS BUS · 4 NODES ONLINE', x0, y + 22);
 }

@@ -119,10 +119,10 @@
       "JavaScript",
       "Vite"
     ],
-    "fact": "I built Kioti’s Craft CMS site from its first commit, with model comparisons, product filters, owner manuals and flexible pages editors can update.",
+    "fact": "A Craft CMS site for a tractor and utility vehicle maker, with product filters, model comparison and owner manuals.",
     "story": {
-      "brief": "Kioti sells tractors, mowers and utility vehicles, and buyers need to narrow a large range and compare models before they visit a dealer.",
-      "did": "I set up the Craft site and built product pages, comparisons that update as buyers choose, filters using details such as price and power, owner manual browsing, and reusable page sections for editors."
+      "brief": "Kioti makes tractors, mowers and utility vehicles. Its site needed to help buyers filter the range and compare models before visiting a dealer.",
+      "did": "The site runs on Craft CMS with Twig templates, a custom PHP module and a Vite build. From the first commit in 2022, I worked across the full stack, from the content model and custom module to API driven product filters, model comparison, owner manuals, Twig components and reusable page sections."
     }
   },
   {

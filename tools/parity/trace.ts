@@ -56,7 +56,7 @@ async function record(browser: Browser, s: Site, sc: Scenario, dir: string, mask
     },
     expect: async (label: string, want: Want) => {
       const got = await page.evaluate(routeState), bad: string[] = [];
-      const meta = got.open ? `${got.open} case study · Louis Gonzalez` : 'Louis Gonzalez';
+      const meta = got.open ? `${got.open} case study · Louis Gonzalez` : 'Louis Gonzalez · Senior developer in Dallas';
       if (want.path !== undefined && got.path !== base + want.path) bad.push(`path ${got.path}`);
       if (want.open !== undefined && got.open !== want.open) bad.push(`open ${got.open}`);
       if (want.focus !== undefined && got.focus !== want.focus) bad.push(`focus ${got.focus}`);

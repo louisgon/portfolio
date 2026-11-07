@@ -34,16 +34,16 @@ const caseFlow = (touch: boolean) => async (r: Run) => {
 };
 
 const direct = (touch: boolean) => async (r: Run) => {
-  await r.wait(150); await r.mark('direct'); await r.expect('direct', { path: 'work/kioti/', open: 'Kioti', focus: '#case', row: 3, history: 0, dom: 'kioti' });
-  await tapOrClick(r.page, '#case .back', touch); await r.wait(90); await r.mark('direct-back'); await r.expect('direct-back', { path: '', open: null, focus: '.proj[3]', row: 3, history: 1 });
+  await r.wait(150); await r.mark('direct'); await r.expect('direct', { path: 'work/kioti/', open: 'Kioti', focus: '#case', row: 6, history: 0, dom: 'kioti' });
+  await tapOrClick(r.page, '#case .back', touch); await r.wait(90); await r.mark('direct-back'); await r.expect('direct-back', { path: '', open: null, focus: '.proj[6]', row: 6, history: 1 });
   await go(r.page, -1); await r.wait(220); await r.mark('reopen'); await r.expect('reopen', { path: 'work/kioti/', open: 'Kioti', focus: '#case', history: 1, dom: 'kioti' });
-  await go(r.page, 1); await r.wait(170); await r.mark('forward'); await r.expect('forward', { path: '', open: null, focus: '.proj[3]', row: 3, history: 1 });
+  await go(r.page, 1); await r.wait(170); await r.mark('forward'); await r.expect('forward', { path: '', open: null, focus: '.proj[6]', row: 6, history: 1 });
 };
 
 const historyFlow = (touch: boolean) => async (r: Run) => {
   await r.wait(LOAD);
   await y(r.page, 'work', 0); await r.wait(90);
-  await tapOrClick(r.page, '.proj[data-i="0"] .acts [data-case]', touch); await r.wait(170); await r.mark('open'); await r.expect('open', { path: 'work/airmail/', open: 'Air Mail', history: 1 });
+  await tapOrClick(r.page, '.proj[data-i="0"] .acts [data-case]', touch); await r.wait(170); await r.mark('open'); await r.expect('open', { path: 'work/anne-graham-lotz/', open: 'Anne Graham Lotz', history: 1 });
   if (touch) await r.page.tap('#case .nav2 button:last-child'); else await press(r.page, 'ArrowRight');
   await r.wait(130); await r.mark('next'); await r.expect('next', { path: 'work/azul/', open: 'Azul', history: 1 });
   await go(r.page, -1); await r.wait(170); await r.mark('back'); await r.expect('back', { path: '', open: null, row: 1, history: 1 });
@@ -72,11 +72,11 @@ const ROUTES: Scenario[] = [
     await y(r.page, 'work', 0); await r.wait(90);
     await r.page.evaluate(() => document.querySelector<HTMLElement>('.proj[data-i="1"] h3 a')!.focus());
     await press(r.page, 'Tab'); await r.wait(10); await press(r.page, 'Enter'); await r.wait(170); await r.mark('keys-open'); await r.expect('keys-open', { path: 'work/azul/', open: 'Azul', focus: 'button.back', history: 1 });
-    await press(r.page, 'ArrowRight'); await r.wait(130); await press(r.page, 'ArrowRight'); await r.wait(130); await r.mark('keys-paged'); await r.expect('keys-paged', { path: 'work/kioti/', open: 'Kioti', focus: 'button.back', history: 1 });
+    await press(r.page, 'ArrowRight'); await r.wait(130); await press(r.page, 'ArrowRight'); await r.wait(130); await r.mark('keys-paged'); await r.expect('keys-paged', { path: 'work/airmail/', open: 'Air Mail', focus: 'button.back', history: 1 });
     await press(r.page, 'Escape'); await r.wait(170); await r.mark('keys-back'); await r.expect('keys-back', { path: '', open: null, focus: '.proj[3] a.pic.rv.in', row: 3, history: 1 });
   } },
   { name: 'desktop-keys-direct', profile: 'desktop', path: 'work/rockit/', fresh: true, run: async (r) => {
-    await r.wait(150); await press(r.page, 'Tab'); await r.wait(10); await r.mark('keys-direct'); await r.expect('keys-direct', { path: 'work/umf/', open: 'Unique Mānuka Factor', focus: 'button.back', row: 7 });
+    await r.wait(150); await press(r.page, 'Tab'); await r.wait(10); await r.mark('keys-direct'); await r.expect('keys-direct', { path: 'work/rockit/', open: 'Rockit Apple', focus: 'button.back', row: 7 });
     await press(r.page, 'Enter'); await r.wait(90); await r.mark('keys-direct-back'); await r.expect('keys-direct-back', { path: '', open: null, focus: '.proj[7] a.pic.rv.in', row: 7, history: 1 });
   } },
   { name: 'phone-direct', profile: 'phone', path: 'work/kioti/', fresh: true, run: direct(true) },

@@ -137,10 +137,10 @@
       "JavaScript",
       "Sass"
     ],
-    "fact": "Built the entire front end of Rockit Apple’s WordPress site, with playful motion to match the brand.",
+    "fact": "A playful WordPress site for Rockit apples, from the brand story to where to buy.",
     "story": {
-      "brief": "Rockit sells small apples in a tube with a playful brand, and the site needed to feel the same.",
-      "did": "I built the front end from the ground up, every page, layout and interaction, with motion throughout."
+      "brief": "Rockit sells snack sized apples in a tube. Its site needed to feel as playful as the brand.",
+      "did": "The site runs on a custom WordPress theme with PHP templates, JavaScript and Sass. I wrote the entire front end from scratch, including every page template, layout and interaction."
     }
   }
 ]

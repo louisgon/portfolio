@@ -14,7 +14,7 @@
     "fact": "A ministry site on headless WordPress, with devotions, articles, Bible studies, videos and search across all of it.",
     "story": {
       "brief": "Anne Graham Lotz’s ministry publishes articles, videos and study resources. It needed a fast site where readers could find them.",
-      "did": "The site runs on headless WordPress with an Astro front end on Cloudflare Workers. I engineered the data layer over the WordPress REST API, the reusable block system, a caching system that purges by tag on publish, multilingual routing, Algolia search, gated content and the deploy pipeline."
+      "did": "The site runs on headless WordPress with an Astro front end on Cloudflare Workers. I wrote the data layer over the WordPress REST API, the reusable block system, a caching system that purges by tag on publish, multilingual routing, Algolia search, gated content and the deploy pipeline."
     }
   },
   {
@@ -86,7 +86,7 @@
     "fact": "A print and digital Grand Prix magazine built on Astro and headless Craft CMS, with issues, stories, a paywall, Stripe checkout and reader accounts.",
     "story": {
       "brief": "Esses is a print and digital magazine about the world of Grand Prix racing. It needed a site that tells its stories well and sells subscriptions directly to readers.",
-      "did": "The site runs on headless Craft CMS with an Astro front end on Cloudflare Workers. I engineered the Craft API integration, tiered gated content, the paywall, Stripe checkout, reader accounts and a Durable Object caching system that purges on publish."
+      "did": "The site runs on headless Craft CMS with an Astro front end on Cloudflare Workers. I wrote the Craft API integration, tiered gated content, the paywall, Stripe checkout, reader accounts and a Durable Object caching system that purges on publish."
     }
   },
   {
@@ -101,10 +101,10 @@
       "GSAP",
       "Vite"
     ],
-    "fact": "I built the interactive side of Perry Weather’s WordPress redesign, from a storm demo that plays as you scroll to pricing and partner search.",
+    "fact": "A WordPress marketing site for weather safety software using Twig and ACF blocks, with interactive product demos, pricing and partner search.",
     "story": {
-      "brief": "Perry Weather needed a site that explains its weather safety products clearly and gives its team flexible pages to publish with.",
-      "did": "I built the scroll controlled storm demo, pricing cards, story slideshows and search for partners and resources. I also rebuilt older page sections so editors could create pages from one consistent set of tools."
+      "brief": "Perry Weather makes weather safety software. Its redesign needed to show the product in action and let the marketing team manage content with reusable blocks.",
+      "did": "The site runs on a custom WordPress theme with Twig templates, reusable ACF blocks and a Vite build. Since 2024, I’ve worked across the full stack, from PHP block controllers and the REST API to Twig templates, GSAP animation, video, pricing, forms and Core Web Vitals."
     }
   },
   {

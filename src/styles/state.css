@@ -12,9 +12,10 @@ html.landing #hero { opacity: 0; animation: hiFail .4s 8s forwards; }
 #jump .bar { width: 180px; height: 2px; margin: 16px auto 0; background: rgb(207 234 255 / 25%); overflow: hidden; }
 #jump .bar i { display: block; height: 100%; background: #fff; transform-origin: 0 50%; box-shadow: 0 0 10px #fff; }
 body.fly-out nav, body.fly-out #hero, body.fly-out main, body.fly-out footer { opacity: 0; transition: opacity .3s var(--ease-io); }
+body.fly-out:not(.fade-back) nav, body.fly-back:not(.fade-back) nav { z-index: 76; pointer-events: none; }
 body.fly-out:not(.fade-back) nav { opacity: 1; transition: none; }
 body.fly-out:not(.fade-back) nav > * { opacity: 0; transition: opacity .18s var(--ease-io); will-change: opacity; backface-visibility: hidden; }
-body.fly-out:not(.fade-back) nav::before { opacity: 0; transition: opacity .2s var(--ease-io) .18s; }
+body.fly-out:not(.fade-back) nav::before { opacity: 0; transition: opacity .12s var(--ease-io) .14s; }
 body.fly-out:not(.fade-back) #hero, body.fly-out:not(.fade-back) main, body.fly-out:not(.fade-back) footer { transition-duration: .18s; }
 body.fly-out:not(.fade-back) #case.on { transition-delay: .12s; }
 body.fly-back #hero, body.fly-back main, body.fly-back footer { transition: opacity .3s var(--ease-io) .08s; }

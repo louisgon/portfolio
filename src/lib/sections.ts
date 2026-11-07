@@ -1,6 +1,6 @@
 export const NAV = [
-  ['intro', 'Log'],
-  ['stack', 'Stack'],
+  ['intro', 'Approach'],
+  ['stack', 'Skills'],
   ['work', 'Work'],
   ['pilot', 'About'],
   ['contact', 'Contact'],

@@ -27,10 +27,10 @@ export async function readout(c: Ctx) {
   await lg(p, "god(true); window.__lg.give('pulse', 5, true); window.__lg.give('missile', 2); window.__lg.give('cooldown', 1); window.__lg.give('thrust', 1)");
   await p.keyboard.press('KeyP'); await p.waitForTimeout(500);
   const inv = await p.evaluate(() => [...document.querySelectorAll('#cardInfo li')].map((li) => ({ nm: li.querySelector('.nm')!.childNodes[0].textContent, pips: li.querySelectorAll('.pp i.on, .pp i.ev').length, pr: li.querySelector('.pr')!.textContent })));
-  const line = await p.evaluate(() => document.querySelector('#cardInfo .st')!.textContent + ' / ' + document.querySelector('#cardInfo .th')!.textContent);
+  const line = await p.evaluate(() => document.getElementById('cardSub')!.textContent + ' / ' + document.getElementById('cardH')!.textContent);
   await shot(c, p, 'readout-pause');
   c.ok('the pause card lists every weapon and boost with its rank and pairing', inv.length === 4 && inv[0].nm === 'Railstorm' && inv[0].pips === 5 && /Evolved/.test(inv[0].pr!) && inv.some((r) => r.nm === 'Missiles' && r.pips === 2 && r.pr === 'Evolves with Magnet') && inv.some((r) => r.nm === 'Thrusters' && r.pr === 'No evolution pair'), inv);
-  c.ok('the pause card states hull, level and the current threat', /^Hull \d of \d · Level \d\d \/ Fighting the Rival fleet$/.test(line), line);
+  c.ok('the pause console heads with the current threat over hull, level and kills', /^Hull \d of \d · Level \d\d · \d+ kills \/ Fighting the Rival fleet$/.test(line), line);
   c.ok('readout pause console clean', !errors.length, errors);
   await context.close();
 }

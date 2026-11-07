@@ -61,7 +61,7 @@ export function status() {
   const row = (r: (typeof w)[number], c: string) => `<li class="${r.evo ? 'evo' : c}">${svg(r.k)}<span class="nm">${r.name}<span class="sr">, ${r.evo ? 'evolved' : `level ${r.lv} of 5`}.</span>${pips(r.lv, r.evo)}</span><span class="pr">${r.pr}</span></li>`;
   const col = (h: string, rs: typeof w, c: string) => `<div><h3 class="mono">${h} ${rs.length} of ${maxW}</h3>${rs.length ? `<ul>${rs.map((r) => row(r, c)).join('')}</ul>` : '<p class="none">None yet</p>'}</div>`;
   const line = `Hull ${G.hull} of ${maxHull()} · Level ${pad2(G.level - G.pend)}`, th = threat();
-  return { html: `<p class="st mono">${line}</p><p class="th mono">${th}</p><div class="cols">${col('Weapons', w, '')}${col('Boosts', b, 'b')}</div>`, say: `${line}. ${th}. Time ${sayT(G.clock)}. Weapons ${w.map((r) => `${r.name} ${r.evo ? 'evolved' : `level ${r.lv}`}`).join(', ') || 'none'}. Boosts ${b.map((r) => `${r.name} level ${r.lv}`).join(', ') || 'none'}.` };
+  return { line, th, html: `<div class="cols">${col('Weapons', w, '')}${col('Boosts', b, 'b')}</div>`, say: `${line}. ${th}. Time ${sayT(G.clock)}. Weapons ${w.map((r) => `${r.name} ${r.evo ? 'evolved' : `level ${r.lv}`}`).join(', ') || 'none'}. Boosts ${b.map((r) => `${r.name} level ${r.lv}`).join(', ') || 'none'}.` };
 }
 
 export const reached = () => (G.fac || G.lap ? `Reached <em>${FAC[G.fac].reach}</em>${G.lap ? ` on lap ${pad2(G.lap + 1)}` : ''}` : `Fought <em>${FAC[0].reach}</em>`);
@@ -73,49 +73,52 @@ export function modal(on: boolean) {
     held.set(s, s.inert); s.inert = true;
   }
 }
-export function reveal(el: HTMLElement) { const c = D.card.getBoundingClientRect(), r = el.getBoundingClientRect(); if (r.bottom > c.bottom - 8) D.card.scrollTop += r.bottom - c.bottom + 16; else if (r.top < c.top + 8) D.card.scrollTop -= c.top - r.top + 16; }
+export function reveal(el: HTMLElement) { const box = $('cardBody'); if (!box.contains(el)) return; const c = box.getBoundingClientRect(), r = el.getBoundingClientRect(); if (r.bottom > c.bottom - 8) box.scrollTop += r.bottom - c.bottom + 16; else if (r.top < c.top + 8) box.scrollTop -= c.top - r.top + 16; }
 export const focusables = () => [...D.card.querySelectorAll<HTMLElement>('button')].filter((b) => b.getClientRects().length > 0);
 const settle = () => { input.keys.clear(); const s = input.stick; if (s) { s.ox = s.x; s.oy = s.y; } };
 export function showCard(mode: Mode, f = 0) {
-  G.card = true; G.mode = mode; D.hero.classList.add('carded'); settle(); modal(true);
+  G.card = true; G.mode = mode; D.hero.classList.add('carded'); D.hero.classList.toggle('ended', mode === 'over'); settle(); modal(true);
   if (VP.p < 1) D.hud.inert = false;
   const slots = `Weapons ${G.W.length} of ${maxW} · Boosts ${G.B.length} of ${maxW}`;
-  const card = D.card, parts = { big: $('cardBig'), sub: $('cardSub'), rs: $('cardStats'), far: $('cardFar'), bld: $('cardBuild'), info: $('cardInfo'), opts: D.opts, act: $('cardActions') };
+  const card = D.card, H = $('cardH'), parts = { h: H, sub: $('cardSub'), big: $('cardBig'), best: $('cardBest'), rs: $('cardStats'), bld: $('cardBuild'), info: $('cardInfo'), opts: D.opts, more: D.cardMore, hint: $('cardHint') };
   const show = (on: string[]) => Object.entries(parts).forEach(([k, el]) => (el.hidden = !on.includes(k)));
   let opts: Option[] = [];
   if (import.meta.env.MODE === 'test') { T.botT = 0; T.notes.push(`card:${mode}`); }
-  if (mode === 'level') {
-    opts = options();
-    $('cardT').textContent = `Level ${pad2(G.level - G.pend + 1)} · Choose one`;
-    $('cardSub').textContent = slots; show(['sub', 'opts', 'act']);
-  } else if (mode === 'cache') {
-    opts = cacheOptions();
-    $('cardT').textContent = `${FAC[f].short} cache · ${opts[0].kind === 'e' ? 'Evolve one' : 'Choose one'}`;
-    $('cardSub').textContent = slots; show(['sub', 'opts', 'act']);
+  if (mode === 'level' || mode === 'cache') {
+    opts = mode === 'level' ? options() : cacheOptions();
+    const evolve = opts[0].kind === 'e';
+    $('cardT').textContent = mode === 'level' ? `Level ${pad2(G.level - G.pend + 1)}` : `${FAC[f].short} cache`;
+    H.textContent = mode === 'level' ? 'Choose an upgrade' : evolve ? 'Evolve a weapon' : 'Choose a reward';
+    $('cardSub').textContent = slots;
+    const keys = opts.map((_, i) => String(i + 1));
+    $('cardHint').textContent = keys.length > 1 ? `Press ${keys.slice(0, -1).join(', ')} or ${keys[keys.length - 1]}` : 'Press 1';
+    show(['h', 'sub', 'opts', 'hint']);
   } else if (mode === 'pause') {
-    $('cardT').textContent = 'Paused'; D.cardMore.textContent = 'Resume'; $('cardInfo').innerHTML = status().html; show(['info', 'act']);
+    const s = status();
+    $('cardT').textContent = 'Paused'; H.textContent = s.th; $('cardSub').textContent = `${s.line} · ${G.kills} kills`; $('cardInfo').innerHTML = s.html; D.cardMore.textContent = 'Resume';
+    show(['h', 'sub', 'info', 'more']);
   } else {
-    $('cardT').textContent = 'Hull lost';
+    $('cardT').textContent = 'Hull lost'; H.innerHTML = reached();
     $('cardBig').innerHTML = fmtT(G.clock);
-    $('cardSub').innerHTML = G.newBest ? 'New best' : `Best <em>${fmtT(P.best)}</em>`;
+    $('cardBest').innerHTML = G.newBest ? 'New best' : `Best <em>${fmtT(P.best)}</em>`;
     $('cardStats').innerHTML = `<div>Kills<b>${G.kills}</b></div><div>Level<b>${pad2(G.level)}</b></div>`;
-    $('cardFar').innerHTML = reached();
     $('cardBuild').innerHTML = buildHTML();
-    D.cardMore.textContent = 'Fly again'; show(['big', 'sub', 'rs', 'far', 'bld', 'act']);
+    D.cardMore.textContent = 'Fly again'; show(['h', 'big', 'best', 'rs', 'bld', 'more']);
   }
   G.opts = opts;
   D.opts.innerHTML = opts.map(optHTML).join('');
-  card.dataset.mode = mode; card.dataset.n = String(opts.length); card.setAttribute('aria-describedby', mode === 'pause' ? 'cardInfo' : mode === 'over' ? 'cardSub cardFar' : 'cardSub'); D.opts.style.setProperty('--n', String(Math.max(1, opts.length))); card.classList.add('on');
-  if (V.W < 861) { const r = card.getBoundingClientRect(), h0 = D.hero.getBoundingClientRect().top, top = (r.top + r.bottom) / 2 - card.offsetHeight / 2 - h0, half = ship.play * V.Z / 2, want = top - half - 12, sy = want >= D.hud.getBoundingClientRect().top - h0 + half ? Math.min(want, V.H * 0.38) : V.H * 0.38; G.camY = (V.H / 2 - sy) / V.Z; }
-  else G.camY = -0.13 * V.vh;
+  card.dataset.mode = mode; card.dataset.n = String(opts.length); card.setAttribute('aria-describedby', mode === 'pause' ? 'cardH cardSub cardInfo' : mode === 'over' ? 'cardH cardBest cardStats' : 'cardH cardSub'); card.classList.add('on');
+  $('cardBody').scrollTop = 0;
+  const hud = D.hud.getBoundingClientRect(), x0 = D.hero.getBoundingClientRect().left, left = hud.left - x0 + card.offsetLeft;
+  if (card.offsetWidth > V.W * 0.8) { G.camX = 0; G.camY = 0; }
+  else { const col = D.hud.querySelector('.clk')!.getBoundingClientRect().right - x0, sx = (col + left) / 2; G.camX = (V.W / 2 - sx) / V.Z; G.camY = 0; }
   if (mode === 'level' || mode === 'cache') { D.opts.classList.add('arm'); clearTimeout(armT); armT = window.setTimeout(() => D.opts.classList.remove('arm'), 380); }
-  live(mode === 'level' || mode === 'cache' ? `${$('cardT').textContent}. ${opts.map((o, i) => `${i + 1}, ${o.name}${o.kind === 'e' ? ', evolution' : o.L ? ` level ${o.L + 1}` : ', new'}`).join('. ')}` : mode === 'pause' ? `Paused. ${status().say}` : `Hull lost. Time ${sayT(G.clock)}. ${reached().replace(/<\/?em>/g, '')}. Fly again or land.`);
-  card.scrollTop = 0;
-  const run = G.run; setTimeout(() => { if (G.run !== run || !G.card || G.mode !== mode) return; const f = focusables()[0]; if (f) { f.focus({ preventScroll: true }); if (input.last === 'key') reveal(f); } }, 60);
+  live(mode === 'level' || mode === 'cache' ? `${$('cardT').textContent}. ${H.textContent}. Choose one. ${opts.map((o, i) => `${i + 1}, ${o.name}${o.kind === 'e' ? ', evolution' : o.L ? ` level ${o.L + 1}` : ', new'}`).join('. ')}` : mode === 'pause' ? `Paused. ${status().say}` : `Hull lost. Time ${sayT(G.clock)}. ${reached().replace(/<\/?em>/g, '')}. Fly again or land.`);
+  const run = G.run; setTimeout(() => { if (G.run !== run || !G.card || G.mode !== mode) return; const f = mode === 'pause' || mode === 'over' ? D.cardMore : focusables()[0]; if (f) { f.focus({ preventScroll: true }); if (input.last === 'key') reveal(f); } }, 60);
 }
 
 export function hideCard() {
-  G.card = false; G.mode = ''; D.hero.classList.remove('carded'); D.card.classList.remove('on'); modal(false);
+  G.card = false; G.mode = ''; D.hero.classList.remove('carded', 'ended'); D.card.classList.remove('on'); modal(false);
   if (document.activeElement && D.card.contains(document.activeElement)) D.hud.focus({ preventScroll: true });
   if (VP.p < 1) D.hud.inert = true;
   input.gx = ship.x; input.gy = ship.y; settle();

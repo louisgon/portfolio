@@ -82,9 +82,9 @@ export async function fleets(c: Ctx) {
     c.ok('the second lap numbers its capital ships', lap.bossName === 'Rival flagship 02', lap.bossName);
     await lg(p, 'god(false)'); for (let i = 0; i < 8; i++) { await lg(p, 'hurt()'); await p.waitForTimeout(150); }
     await p.waitForTimeout(1700);
-    const far = await p.evaluate(() => document.getElementById('cardFar')!.textContent);
+    const far = await p.evaluate(() => document.getElementById('cardH')!.textContent);
     await shot(c, p, 'fleets-results');
-    c.ok('the results card says how far the run got', (await st(p)).mode === 'over' && far === 'Reached the Rival fleet on lap 02', far);
+    c.ok('the results console heads with how far the run got', (await st(p)).mode === 'over' && far === 'Reached the Rival fleet on lap 02', far);
     c.ok('fleets console clean', !errors.length, errors);
     await context.close();
   }

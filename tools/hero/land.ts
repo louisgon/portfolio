@@ -12,8 +12,8 @@ export async function land(c: Ctx) {
   const rl = await st(p), planet = await luma(p, 0.62, 0.78);
   c.ok('landing returns the orbit hero at rest', (await atRest(p)) && Math.abs(rl.rx - 720) < 30 && Math.abs(rl.ry - 594) < 30 && rl.drop === 0 && planet > space0 * 2, `${rl.rx},${rl.ry} planet ${planet} against space ${space0}`);
   c.ok('the HUD is inert after landing', await p.evaluate(() => (document.getElementById('hud') as HTMLElement).inert));
-  c.ok('landing shows the toast', await p.evaluate(() => document.getElementById('toast')!.classList.contains('on')));
-  await shot(c, p, 'land-toast');
+  c.ok('landing leaves the hero clean with no score laid over it', await p.evaluate(() => !document.getElementById('toast')));
+  await shot(c, p, 'land-clean');
   await p.mouse.move(700, 300); await space(p);
   c.ok('a Space hold starts without scrolling', (await playing(p)) && (await scrolled(p)) === 0);
   await topDown(p);

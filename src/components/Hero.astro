@@ -23,25 +23,18 @@ const hazeCss = `#hero{--shade:${copyShade}}#hero .ph{background:${wideHaze}}@me
   <div class="hint mono" aria-hidden="true">Scroll to explore</div>
   <div class="best mono" aria-hidden="true" id="bestLine" hidden>LG-01 · Best <b id="best0">00<i class="sep"></i>00</b></div>
   <div class="hud" id="hud" data-nosnippet tabindex="-1" aria-label="LG-01 flight" inert>
-    <div class="clk" aria-hidden="true"><b id="clock">00<i class="sep"></i>00</b><div class="lvl mono" id="lvl"><span id="lvN">Level 01</span><i class="bar"><b id="xpFill"></b></i></div><div class="build" id="build"></div><div class="pick mono" id="pick" aria-hidden="true"></div></div>
+    <div class="clk" aria-hidden="true"><b id="clock">00<i class="sep"></i>00</b><div class="hull"><span class="mono">Hull</span><div class="lv" id="lv"><i></i><i></i><i></i></div></div><div class="lvl mono" id="lvl"><span id="lvN">Level 01</span><i class="bar"><b id="xpFill"></b></i></div><div class="build" id="build"></div><div class="pick mono" id="pick" aria-hidden="true"></div></div>
     <div class="kc mono" aria-hidden="true">Kills<b id="kills">0</b><span class="bt">Best <em id="best1">00<i class="sep"></i>00</em></span></div>
-    <div class="hull" aria-hidden="true"><span class="mono">Hull</span><div class="lv" id="lv"><i></i><i></i><i></i></div></div>
     <div class="ctl mono" aria-hidden="true" id="ctl"><kbd>WASD</kbd> or arrows to steer</div>
-    <div class="acts"><button type="button" class="pz" id="pz" aria-label="Pause"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button><button type="button" class="land mono" id="land">Land <kbd>Esc</kbd></button></div>
+    <button type="button" class="pz" id="pz" aria-label="Pause"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+    <button type="button" class="land" id="land">Land <kbd>Esc</kbd></button>
     <div class="boss" id="bossBar" aria-hidden="true"><span class="mono" id="bossName">Rival flagship</span><i><b id="bossFill"></b></i></div>
     <div class="msg" id="msg" aria-hidden="true"><b id="msgB"></b><span class="mono" id="msgS"></span></div>
     <div class="panel" id="card" role="dialog" aria-modal="true" aria-labelledby="cardT">
-      <div class="mono" id="cardT">Level 02</div>
-      <b class="big" id="cardBig">00<i class="sep"></i>00</b>
-      <div class="sub mono" id="cardSub">New best</div>
-      <div class="rs mono" id="cardStats"></div>
-      <div class="far mono" id="cardFar"></div>
-      <div class="bld" id="cardBuild"></div>
-      <div class="inv" id="cardInfo"></div>
-      <div class="opts" id="opts"></div>
-      <div class="hc" id="cardActions"><button type="button" class="btn" id="cardMore">Fly again</button><button type="button" class="btn ghost" id="cardBack">Land</button></div>
+      <div class="chd"><div class="mono" id="cardT">Level 02</div><b class="ttl" id="cardH"></b><div class="sub mono" id="cardSub"></div></div>
+      <div class="cmd" id="cardBody"><b class="big" id="cardBig">00<i class="sep"></i>00</b><div class="nb mono" id="cardBest">New best</div><div class="rs mono" id="cardStats"></div><div class="bld" id="cardBuild"></div><div class="inv" id="cardInfo"></div><div class="opts" id="opts"></div></div>
+      <div class="hc" id="cardActions"><span class="kh mono" id="cardHint" aria-hidden="true"></span><button type="button" class="btn ghost" id="cardBack">Land</button><button type="button" class="btn" id="cardMore">Fly again</button></div>
     </div>
   </div>
-  <div class="toast" id="toast" aria-hidden="true"><b id="toastB">00<i class="sep"></i>00</b><span class="mono" id="toastS">Best</span></div>
   <div class="sr" aria-live="polite" id="live"></div>
 </section>

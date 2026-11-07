@@ -17,7 +17,7 @@ export async function modal(c: Ctx) {
     const seen: { inCard: boolean; text: string }[] = [];
     for (let i = 0; i < 5; i++) { await p.keyboard.press('Tab'); seen.push(await active(p)); }
     await p.keyboard.press('Shift+Tab'); const back = await active(p);
-    c.ok('Tab stays inside the card and reaches Land', seen.every((f) => f.inCard) && seen.some((f) => f.text === 'Land') && back.inCard, { seen: seen.map((f) => f.text), back: back.text });
+    c.ok('Tab stays inside the card and reaches Land', seen.every((f) => f.inCard) && seen.some((f) => /^Land\b/.test(f.text)) && back.inCard, { seen: seen.map((f) => f.text), back: back.text });
     await p.click('#cardBack');
     c.ok('Land on a level card lands', await atRest(p, 4000));
     c.ok('closing the run frees the page again', await p.evaluate(() => !(document.querySelector('main') as HTMLElement).inert && !(document.querySelector('nav') as HTMLElement).inert));

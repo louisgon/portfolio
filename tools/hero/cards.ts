@@ -96,7 +96,7 @@ export async function cards(c: Ctx) {
     const ov = await st(p);
     c.ok('losing the hull ends the run with results over the top down view', ov.over && ov.card && ov.mode === 'over' && ov.view === 1, ov);
     await shot(c, p, 'cards-results');
-    c.ok('results show time, kills, level, build and best', await p.evaluate(() => { const k = document.getElementById('card')!; return !!(k.querySelector('#cardBig')!.textContent && k.querySelector('#cardStats b') && k.querySelector('#cardBuild span') && /best/i.test(k.querySelector('#cardSub')!.textContent!)); }));
+    c.ok('results show time, kills, level, build and best', await p.evaluate(() => { const k = document.getElementById('card')!; return !!(k.querySelector('#cardBig')!.textContent && k.querySelector('#cardStats b') && k.querySelector('#cardBuild span') && /best/i.test(k.querySelector('#cardBest')!.textContent!)); }));
     c.ok('the best time is saved', await p.evaluate(() => localStorage.getItem('lg01-top-best') !== null));
     c.ok('no colons or dashes on the results', !(await noColons(p)).length, await noColons(p));
     await p.click('#cardMore'); await p.waitForTimeout(500);
@@ -133,9 +133,9 @@ export async function cards(c: Ctx) {
     await T('touchMove', 330, 600); await p.waitForTimeout(400); const m3 = await st(p); await T('touchEnd');
     c.ok('moving the held thumb steers again', m3.x - m2.x > 30, m3.x - m2.x);
     await lg(p, 'xp(30)'); await p.waitForFunction(() => (window as unknown as { __lg: { st: () => { card: boolean } } }).__lg.st().card, null, { timeout: 5000 }); await p.waitForTimeout(900);
-    const pc = await covers(p);
+    const pc = await p.evaluate(() => { const k = document.getElementById('card')!.getBoundingClientRect(), t = document.getElementById('cardT')!.getBoundingClientRect(), l = document.getElementById('cardBack')!.getBoundingClientRect(); return { w: Math.round(k.width / innerWidth * 100), title: t.top >= 0 && t.bottom <= innerHeight, land: l.top >= 0 && l.bottom <= innerHeight && l.height >= 44 }; });
     await shot(c, p, 'cards-phone-level');
-    c.ok('the level card leaves the ship visible on a phone', !pc.over, pc);
+    c.ok('on a phone the level console fills the screen with its title and Land in view', pc.w >= 90 && pc.title && pc.land, pc);
     for (let i = 0; i < 6 && (await st(p)).card; i++) { const o = await p.evaluate(() => { const b = document.querySelector<HTMLElement>('#opts .opt')!.getBoundingClientRect(); return [b.x + b.width / 2, b.y + b.height / 2]; }); await p.touchscreen.tap(o[0], o[1]); await p.waitForTimeout(700); }
     c.ok('a phone tap chooses and resumes', !(await st(p)).card);
     c.ok('phone cards console clean', !errors.length, errors);

@@ -12,7 +12,7 @@ import { cancelInput } from './input';
 import { P, store } from './store';
 import { releaseGame } from './index';
 
-let lateT = 0, tipT = 0, toastT = 0;
+let lateT = 0, tipT = 0;
 
 function hold(on: boolean) {
   document.body.classList.toggle('in-game', on); $('nav').inert = on; document.documentElement.classList.toggle('tr-lock', on);
@@ -30,7 +30,7 @@ export function start(kind?: Kind) {
   if (import.meta.env.MODE === 'test') Object.assign(T, { botT: 0, botA: 0, botFlip: 15, botDir: 1, bdx: 0, bdy: 0, hits: [], notes: [] });
   const w = mkW('pulse'); G.W.push(w); G.wm.pulse = w;
   D.hero.classList.add('playing'); renderHull(); renderBuild(); resetHud();
-  D.hero.classList.remove('bossing', 'carded', 'late'); D.toast.classList.remove('on'); D.card.classList.remove('on'); modal(false);
+  D.hero.classList.remove('bossing', 'carded', 'ended', 'late'); D.card.classList.remove('on'); modal(false);
   const back = document.activeElement; if (back instanceof HTMLElement && back !== document.body && !D.hud.contains(back)) input.focusBack = back;
   D.copy.inert = D.fly.inert = true; hold(true);
   if (kind) setLast(kind);
@@ -56,16 +56,12 @@ export function restart() { const sx = ship.x, sy = ship.y; G.on = false; start(
 export function land() {
   if (!G.on) return;
   const t = G.clock, wasOver = G.over, flown = VP.p >= 1;
-  G.on = false; G.card = false; D.hero.classList.remove('flying', 'bossing', 'carded', 'tip', 'late'); D.card.classList.remove('on'); modal(false);
+  G.on = false; G.card = false; D.hero.classList.remove('flying', 'bossing', 'carded', 'ended', 'tip', 'late'); D.card.classList.remove('on'); modal(false);
   D.hud.inert = true;
   for (let i = 0; i < WS.nE; i++) { if (EN[i].mode === -1) EN[i].dead = 1; else EN[i].mode = 9; }
   BO.n = MI.n = EB.n = SH.n = 0; for (const s of TG) s.on = false; for (const s of NR) s.on = false; TQ.length = 0; G.cache = null;
   if (flown && !wasOver && t > P.best) { P.best = t; store.set('lg01-top-best', P.best.toFixed(2)); G.newBest = true; }
   showBest();
-  if (t > 1) {
-    $('toastB').innerHTML = `${wasOver ? 'Lasted' : 'Survived'} ${fmtT(t)}`; $('toastS').innerHTML = G.newBest ? 'New best' : `Best ${fmtT(P.best)}`;
-    D.toast.classList.add('on'); clearTimeout(toastT); toastT = window.setTimeout(() => D.toast.classList.remove('on'), 2600);
-  }
   $('bestLine').hidden = false;
   if (G.dead) { G.dead = false; VP.rv = 1; ship.h = ship.hv = 0; }
   if (flown) { VP.rx = V.W * rs.restX; VP.ry = V.H * rs.restY; VP.rw = rs.base; }
@@ -125,7 +121,7 @@ export function steerHead(k: number) {
 }
 
 export function updCam(k: number, mx: number, my: number, rk: number) {
-  if (G.card && VP.p >= 1) { const f = 1 - Math.exp(-rk * 5); cam.x += (ship.x - cam.x) * f; cam.y += (ship.y + (reduce ? 0 : G.camY) - cam.y) * f; return; }
+  if (G.card && VP.p >= 1) { const f = 1 - Math.exp(-rk * 5); cam.x += (ship.x + (reduce ? 0 : G.camX) - cam.x) * f; cam.y += (ship.y + (reduce ? 0 : G.camY) - cam.y) * f; return; }
   if (VP.dir < 0) { const f = 1 - Math.exp(-k * 7); cam.x += (ship.x - cam.x) * f; cam.y += (ship.y - cam.y) * f; return; }
   if (VP.p < 1) { cam.x = ship.x; cam.y = ship.y; return; }
   if (k <= 0) return;

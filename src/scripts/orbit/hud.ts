@@ -37,7 +37,8 @@ export const buzz = (ms: number) => { try { if (navigator.vibrate && navigator.u
 export function showBest() { $('best0').innerHTML = $('best1').innerHTML = fmtT(P.best); $('best1').parentElement!.hidden = !P.best; }
 export function updateLabels() {
   const t = input.last === 'touch';
-  $('land').innerHTML = t ? 'Land' : 'Land <kbd>Esc</kbd>';
+  $('land').innerHTML = $('cardBack').innerHTML = t ? 'Land' : 'Land <kbd>Esc</kbd>';
+  D.hero.classList.toggle('touchui', t);
   $('ctl').innerHTML = t ? 'Drag to steer · Land to exit' : '<kbd>WASD</kbd> or arrows to steer · <kbd>P</kbd> to pause';
 }
 export const setLast = (k: Kind) => { if (input.last === k) return; const was = input.last === 'touch'; input.last = k; if (was !== (k === 'touch')) updateLabels(); };
@@ -47,8 +48,9 @@ export function hudTick(rdt: number, now: number) {
     const s = Math.floor(G.clock);
     if (s !== H.sec) { H.sec = s; D.clock.innerHTML = fmtT(s); if (s && s % 30 === 0 && !reduce) { D.clock.classList.add('pop'); clearTimeout(clockT); clockT = window.setTimeout(() => D.clock.classList.remove('pop'), 90); } }
     if (G.kills !== H.kills) { H.kills = G.kills; D.kills.textContent = String(G.kills); }
-    if (G.level - G.pend !== H.lv) { H.lv = G.level - G.pend; D.lvN.textContent = `Level ${pad2(H.lv)}`; H.xp = 0; }
-    const tgt = G.pend ? 1 : G.xp / G.need; H.xp += (tgt - H.xp) * (1 - Math.exp(-rdt * 14));
+    const choosing = G.card && G.mode === 'level' ? 1 : 0;
+    if (G.level - G.pend + choosing !== H.lv) { H.lv = G.level - G.pend + choosing; D.lvN.textContent = `Level ${pad2(H.lv)}`; H.xp = 0; }
+    const tgt = G.pend > choosing ? 1 : G.xp / G.need; H.xp += (tgt - H.xp) * (1 - Math.exp(-rdt * 14));
     if (Math.abs(H.xp - H.xpSet) > 0.002) { H.xpSet = H.xp; D.xpFill.style.transform = `scale3d(${clamp(H.xp).toFixed(3)}, 1, 1)`; }
     const bb = G.boss && !G.boss.dead ? clamp(G.boss.hp / G.boss.max) : -1;
     if (Math.abs(bb - H.boss) > 0.002) { if ((bb >= 0) !== (H.boss >= 0)) { D.bossBar.classList.toggle('on', bb >= 0); measureLane(); } if (bb >= 0) D.bossFill.style.transform = `scale3d(${bb.toFixed(3)}, 1, 1)`; H.boss = bb; }

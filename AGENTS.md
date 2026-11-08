@@ -9,6 +9,7 @@ The site is a static Astro project in plain strict TypeScript with bun and no UI
 | Path | What it is |
 |---|---|
 | `src/pages/index.astro` | The home page, rendering `Site` |
+| `src/pages/404.astro` | The page for unknown URLs, standalone with no scripts, served through `not_found_handling` in `wrangler.jsonc` |
 | `src/pages/work/[slug].astro` | One page per project at `/work/<id>/`, rendering `Site` with that case already open |
 | `src/layouts/Base.astro` | Head, noindex meta, fonts, the stylesheets in cascade order, the `site-data` JSON island and the script entry |
 | `src/components/` | `Site.astro` composes the page. One component per section (Nav, MobileMenu, Hero, PilotLog, Stack, Work, Clients, About, Contact, Footer, CaseShell) plus Backdrop, Cursor, ReviewTab, Heading and Divider |

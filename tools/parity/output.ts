@@ -1,18 +1,28 @@
 import sharp from 'sharp';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
+import { brotliCompressSync, constants } from 'node:zlib';
 import projects from '../../src/content/projects.json';
 import { WIDTHS } from '../../src/lib/widths';
 import paint from '../../src/lib/paint.json';
 
 const TWO_D = /\b(translate[XYZ]?|scale[XYZ]?|rotate[XYZ]?|translate|scale|rotate)\(/g;
 const NOINDEX = '<meta name="robots" content="noindex">';
+// Lantern adds a round trip, about 300ms of simulated mobile LCP, past this size
+const HOME_BROTLI_LIMIT = 25988;
 const files = (dir: string, ext: RegExp): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name), ext) : ext.test(e.name) ? [join(dir, e.name)] : []));
 const sources = (dir: string) => files(dir, /\.(ts|astro|css)$/);
 
 export async function output(dist: string, review: boolean, index = false) {
   const hidden = !review && !index;
   const problems: string[] = [], html = readFileSync(join(dist, 'index.html'), 'utf8');
+  if (!review) {
+    const homeBytes = brotliCompressSync(html, { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } }).length;
+    console.log(`output: home document ${homeBytes} of ${HOME_BROTLI_LIMIT} bytes at brotli 4`);
+    if (homeBytes > HOME_BROTLI_LIMIT) {
+      problems.push(`home document is ${homeBytes} bytes at brotli 4, over the ${HOME_BROTLI_LIMIT} limit`);
+    }
+  }
   const pages = [['index.html', html], ...projects.filter((p) => existsSync(join(dist, 'work', p.id, 'index.html'))).map((p) => [`work/${p.id}/index.html`, readFileSync(join(dist, 'work', p.id, 'index.html'), 'utf8')])];
   for (const [name, page] of pages) for (const m of [...page.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n').matchAll(TWO_D)) problems.push(`2D transform in ${name} CSS: ${m[0]}`);
   for (const file of sources('src')) for (const m of readFileSync(file, 'utf8').matchAll(/(?:transform|keyframes)[^;{}]*?\b(translate[XYZ]?|scale[XYZ]?|rotate[XYZ]?|translate|scale|rotate)\(/g)) problems.push(`2D transform in ${file}: ${m[1]}(`);

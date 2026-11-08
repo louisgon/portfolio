@@ -17,9 +17,12 @@ const spaceless: AstroIntegration = {
         const path = new URL(f, dir), html = await readFile(path, 'utf8');
         await writeFile(path, html.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/g, (_, open: string, css: string, close: string) => open + squeeze(css) + close));
       }
+      const cacheHashed = '/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n';
+      let headers = cacheHashed;
       if (!index) {
-        await writeFile(new URL('_headers', dir), '/*\n  X-Robots-Tag: noindex\n');
+        headers += '/*\n  X-Robots-Tag: noindex\n';
       }
+      await writeFile(new URL('_headers', dir), headers);
     },
   },
 };

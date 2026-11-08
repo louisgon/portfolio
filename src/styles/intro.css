@@ -11,5 +11,6 @@
 #intro .stats > div > span { display: block; text-wrap: balance; margin-top: 14px; font: 600 11px/1.4 "JetBrains Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
 @media (max-width: 860px) { #intro .stats { grid-template-columns: 1fr; margin-top: 40px; } #intro .stats > div, #intro .stats > div:first-child { padding: 22px 0 18px; border-left: 0; border-bottom: 1px solid var(--line); } #intro .stats > div:last-child { border-bottom: 0; } #intro .stats b { font-size: 48px; } }
 #intro .inner { position: relative; z-index: 1; }
-#intro .eyebrow, #intro .stats { will-change: transform, opacity; backface-visibility: hidden; }
-@media (max-width: 860px) { #intro .big { max-width: none; } #intro .pin { min-height: 0; align-content: start; padding-top: clamp(110px, 16vh, 150px) !important; padding-bottom: 56px !important; } }
+#intro .sdiv.pinned { position: relative; left: 0; right: 0; margin-bottom: 52px; }
+#intro .sdiv, #intro .stats { will-change: transform, opacity; backface-visibility: hidden; }
+@media (max-width: 860px) { #intro .sdiv.pinned { margin-bottom: 40px; } #intro .big { max-width: none; } #intro .pin { min-height: 0; align-content: start; padding-top: clamp(110px, 16vh, 150px) !important; padding-bottom: 56px !important; } }

@@ -36,7 +36,7 @@ function showStats(k: number) {
 export function initStats() {
   statEls = [...$('stats').querySelectorAll<HTMLElement>('[data-n]')];
   document.fonts ? document.fonts.ready.then(digitCells) : digitCells();
-  INTRO = { ey: $('intro').querySelector<HTMLElement>('.eyebrow')!, st: $('stats') };
+  INTRO = { ey: $('intro').querySelector<HTMLElement>('.sdiv')!, st: $('stats') };
 }
 
 export const observeStats = () => new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) statsSeen = true; }), { threshold: 0.6 }).observe($('stats'));

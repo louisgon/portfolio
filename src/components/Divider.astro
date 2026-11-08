@@ -1,6 +1,6 @@
 ---
 import { nn } from '../lib/sections';
-interface Props { n: number; name: string }
-const { n, name } = Astro.props;
+interface Props { n: number; name: string; pinned?: boolean }
+const { n, name, pinned = false } = Astro.props;
 ---
-<div class="sdiv" aria-hidden="true"><span class="mono">{nn(n)} · {name}</span></div>
+<div class:list={["sdiv", { pinned }]} aria-hidden="true"><span class="mono">{nn(n)} · {name}</span></div>

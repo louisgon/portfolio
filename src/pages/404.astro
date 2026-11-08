@@ -1,0 +1,41 @@
+---
+import '../styles/fonts.css';
+import '../styles/fonts-late.css';
+import '../styles/base.css';
+import { BASE } from '../lib/pages';
+import { LOGO } from '../lib/skills';
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page not found · Louis Gonzalez</title>
+<link rel="icon" href={`${BASE}favicon.ico`} sizes="48x48">
+<link rel="icon" href={`${BASE}favicon.svg`} type="image/svg+xml">
+<link rel="apple-touch-icon" href={`${BASE}apple-touch-icon.png`}>
+</head>
+<body>
+<main>
+<a class="logo" href={BASE} aria-label="Louis Gonzalez, home"><svg viewBox="0 0 4 5" aria-hidden="true"><path fill="currentColor" d={LOGO} /></svg></a>
+<div class="copy">
+<div class="eyebrow mono k">404</div>
+<h1 class="disp">Page not found</h1>
+<p>That link is out of date or mistyped.</p>
+<a class="btn" href={BASE}>Back to home</a>
+</div>
+</main>
+</body>
+</html>
+
+<style>
+  main { display: grid; align-content: center; min-height: 100vh; min-height: 100svh; padding: 96px clamp(20px, 5vw, 72px); }
+  .logo { position: absolute; left: clamp(20px, 5vw, 72px); top: 28px; color: var(--fg); }
+  .logo svg { display: block; width: 20px; height: 25px; }
+  .copy { will-change: transform, opacity; backface-visibility: hidden; animation: arrive .7s var(--ease-out) both; }
+  h1 { margin: 0; font-size: clamp(34px, 5.6vw, 92px); line-height: 1; }
+  p { margin: 20px 0 32px; color: var(--dim); font-size: 18px; }
+  @keyframes arrive { from { opacity: 0; transform: translate3d(0, 22px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+  @media (prefers-reduced-motion: reduce) { .copy { animation-name: fade; } @keyframes fade { from { opacity: 0; } to { opacity: 1; } } }
+</style>

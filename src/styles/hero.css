@@ -142,7 +142,7 @@
 #hero .panel.on .opt:nth-child(2) { animation-delay: .05s; }
 #hero .panel.on .opt:nth-child(3) { animation-delay: .1s; }
 @keyframes optIn { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
-#hero .panel .opt:focus-visible { border-color: var(--holo); background: #1a2742; transform: translate3d(0, -3px, 0); outline: none; box-shadow: none; }
+#hero .panel .opt:focus-visible { border-color: var(--holo); background: #1a2742; outline: none; box-shadow: none; }
 #hero .panel .opt svg { width: 32px; height: 32px; flex: none; color: var(--holo); filter: drop-shadow(0 0 8px rgb(143 211 255 / 45%)); }
 #hero .panel .opt.kb svg { color: #efd9b6; filter: none; }
 #hero .panel .opt.ke { border-color: rgb(255 207 138 / 75%); background: linear-gradient(180deg, #4a3220, #2d2018 70%); box-shadow: 0 0 0 1px rgb(255 207 138 / 18%), 0 12px 40px rgb(255 160 70 / 22%); }
@@ -280,7 +280,7 @@
 @media (prefers-reduced-motion: reduce) {
   #hero .hud .lv i.gain, #hero .panel.on .opt, #hero .panel .opt.ke::after, #hero .hint { animation: none; }
   #hero .hud .build span.hit::after { animation-name: slotFade; }
-  #hero .hud .lv i, #hero .hud .lv i.off, #hero .hud .pick, #hero .hud .boss, #hero .panel .opt:focus-visible { transform: none; }
+  #hero .hud .lv i, #hero .hud .lv i.off, #hero .hud .pick, #hero .hud .boss { transform: none; }
   #hero .panel, #hero .panel.on { transform: translate3d(0, 0, 0); }
   #hero .hud .boss, #hero .hud .boss.on { transform: translate3d(-50%, 0, 0); }
 }

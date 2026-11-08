@@ -76,6 +76,8 @@ export function modal(on: boolean) {
 export function reveal(el: HTMLElement) { const box = $('cardBody'); if (!box.contains(el)) return; const c = box.getBoundingClientRect(), r = el.getBoundingClientRect(); if (r.bottom > c.bottom - 8) box.scrollTop += r.bottom - c.bottom + 16; else if (r.top < c.top + 8) box.scrollTop -= c.top - r.top + 16; }
 export const focusables = () => [...D.card.querySelectorAll<HTMLElement>('button')].filter((b) => b.getClientRects().length > 0);
 const settle = () => { input.keys.clear(); const s = input.stick; if (s) { s.ox = s.x; s.oy = s.y; } };
+const place = () => D.card.style.setProperty('--top', `${Math.max(0, Math.round((D.hud.clientHeight - D.card.offsetHeight) / 2))}px`);
+addEventListener('resize', () => { if (G.card) place(); });
 export function showCard(mode: Mode, f = 0) {
   G.card = true; G.mode = mode; D.hero.classList.add('carded'); D.hero.classList.toggle('ended', mode === 'over'); settle(); modal(true);
   if (VP.p < 1) D.hud.inert = false;
@@ -107,7 +109,7 @@ export function showCard(mode: Mode, f = 0) {
   }
   G.opts = opts;
   D.opts.innerHTML = opts.map(optHTML).join('');
-  card.dataset.mode = mode; card.dataset.n = String(opts.length); card.setAttribute('aria-describedby', mode === 'pause' ? 'cardH cardSub cardInfo' : mode === 'over' ? 'cardH cardBest cardStats' : 'cardH cardSub'); card.classList.add('on');
+  card.dataset.mode = mode; card.dataset.n = String(opts.length); place(); card.setAttribute('aria-describedby', mode === 'pause' ? 'cardH cardSub cardInfo' : mode === 'over' ? 'cardH cardBest cardStats' : 'cardH cardSub'); card.classList.add('on');
   $('cardBody').scrollTop = 0;
   const hud = D.hud.getBoundingClientRect(), x0 = D.hero.getBoundingClientRect().left, left = hud.left - x0 + card.offsetLeft;
   if (card.offsetWidth > V.W * 0.8) { G.camX = 0; G.camY = 0; }

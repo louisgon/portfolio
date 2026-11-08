@@ -30,7 +30,7 @@ export async function readout(c: Ctx) {
   const line = await p.evaluate(() => document.getElementById('cardSub')!.textContent + ' / ' + document.getElementById('cardH')!.textContent);
   await shot(c, p, 'readout-pause');
   c.ok('the pause card lists every weapon and boost with its rank and pairing', inv.length === 4 && inv[0].nm === 'Railstorm' && inv[0].pips === 5 && /Evolved/.test(inv[0].pr!) && inv.some((r) => r.nm === 'Missiles' && r.pips === 2 && r.pr === 'Evolves with Magnet') && inv.some((r) => r.nm === 'Thrusters' && r.pr === 'No evolution pair'), inv);
-  c.ok('the pause console heads with the current threat over hull, level and kills', /^Hull \d of \d · Level \d\d · \d+ kills \/ Fighting the Rival fleet$/.test(line), line);
+  c.ok('the pause console heads with the current threat over hull, level and kills', /^Hull \d of \d · Level \d\d · \d+ kills? \/ Fighting the Rival fleet$/.test(line), line);
   c.ok('readout pause console clean', !errors.length, errors);
   await context.close();
 }

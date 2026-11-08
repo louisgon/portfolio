@@ -59,7 +59,7 @@ export function status() {
   const w = G.W.map((x) => ({ k: x.evo ? WEAP[x.id].evo : x.id, name: x.evo ? EVO[WEAP[x.id].evo].name : WEAP[x.id].name, lv: x.evo ? 5 : x.lv, evo: x.evo, pr: x.evo ? `Evolved from ${WEAP[x.id].name}` : `Evolves with ${BOOST[WEAP[x.id].pair].name}` }));
   const b = G.B.map((id) => ({ k: id, name: BOOST[id].name, lv: bl(id), evo: false, pr: boostPr(id) || `Paired with ${EVO[WEAP[(Object.keys(WEAP) as (keyof typeof WEAP)[]).find((q) => WEAP[q].pair === id)!].evo].name}` }));
   const row = (r: (typeof w)[number], c: string) => `<li class="${r.evo ? 'evo' : c}">${svg(r.k)}<span class="nm">${r.name}<span class="sr">, ${r.evo ? 'evolved' : `level ${r.lv} of 5`}.</span>${pips(r.lv, r.evo)}</span><span class="pr">${r.pr}</span></li>`;
-  const col = (h: string, rs: typeof w, c: string) => `<div><h3 class="mono">${h} ${rs.length} of ${maxW}</h3>${rs.length ? `<ul>${rs.map((r) => row(r, c)).join('')}</ul>` : '<p class="none">None yet</p>'}</div>`;
+  const col = (h: string, rs: typeof w, c: string) => `<div><h3 class="mono">${h} ${rs.length} of ${maxW}</h3>${rs.length ? `<ul>${rs.map((r) => row(r, c)).join('')}</ul>` : ''}${rs.length < maxW ? `<div class="empty" aria-hidden="true">${'<i></i>'.repeat(maxW - rs.length)}</div>` : ''}</div>`;
   const line = `Hull ${G.hull} of ${maxHull()} · Level ${pad2(G.level - G.pend)}`, th = threat();
   return { line, th, html: `<div class="cols">${col('Weapons', w, '')}${col('Boosts', b, 'b')}</div>`, say: `${line}. ${th}. Time ${sayT(G.clock)}. Weapons ${w.map((r) => `${r.name} ${r.evo ? 'evolved' : `level ${r.lv}`}`).join(', ') || 'none'}. Boosts ${b.map((r) => `${r.name} level ${r.lv}`).join(', ') || 'none'}.` };
 }
@@ -94,8 +94,8 @@ export function showCard(mode: Mode, f = 0) {
     $('cardHint').textContent = keys.length > 1 ? `Press ${keys.slice(0, -1).join(', ')} or ${keys[keys.length - 1]}` : 'Press 1';
     show(['h', 'sub', 'opts', 'hint']);
   } else if (mode === 'pause') {
-    const s = status();
-    $('cardT').textContent = 'Paused'; H.textContent = s.th; $('cardSub').textContent = `${s.line} · ${G.kills} kills`; $('cardInfo').innerHTML = s.html; D.cardMore.textContent = 'Resume';
+    const s = status(), kills = G.kills === 1 ? '1 kill' : `${G.kills} kills`;
+    $('cardT').textContent = 'Paused'; H.textContent = s.th; $('cardSub').textContent = `${s.line} · ${kills}`; $('cardInfo').innerHTML = s.html; D.cardMore.textContent = 'Resume';
     show(['h', 'sub', 'info', 'more']);
   } else {
     $('cardT').textContent = 'Hull lost'; H.innerHTML = reached();

@@ -124,7 +124,7 @@ Scenarios marked `fresh` cover behaviour the baseline does not have (direct case
 - Respect reduced motion with plain fades.
 
 ### Copy
-- Keep copy general. Prefer totals (13 years on the web, 170+ projects shipped) over breakdowns by employer or type.
+- Keep copy general. Prefer totals (13 years on the web, 200+ projects shipped) over breakdowns by employer or type.
 - Never write job-seeking lines such as open to roles or open to contract work. Contact copy invites people to talk about what they are building.
 - In anything written for Louis (copy, docs, PRs, commits), avoid colons and dashes in prose.
 - Never use the word platform or platforms in site copy. Say software, sites, apps, projects or work. The hero subline reads "I’m a senior developer in Dallas. I build websites and apps."

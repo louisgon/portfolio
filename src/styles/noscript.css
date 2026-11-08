@@ -1,0 +1,19 @@
+html body { animation: none; }
+html body.hi-nav nav, html body.hi-main main, html body.hi-main footer { opacity: 1; pointer-events: auto; animation: none; content-visibility: visible !important; }
+html #hero .bg img { opacity: 1; visibility: visible; }
+html [data-stage] .st, html [data-stage] .marquee, html .rv, html .sdiv span, html #case .cr { opacity: 1; transform: none; }
+html [data-stage] .eyebrow.st::before, html .sdiv::before, html .h2 .ln > span { transform: none; }
+html body.case-open #case { opacity: 1; visibility: visible; }
+html body.case-open #case .hero-shot + .splanet { opacity: 1; }
+html .proj .pic { opacity: 1; background-size: cover; background-position: top; }
+html .proj .planet { --po: 1; }
+html .proj .planet::before { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--planet) center / contain no-repeat; filter: brightness(.82) saturate(.85); }
+html #pilot .holo { background: center / cover no-repeat; }
+html .proj .pic img, html .proj .planet img, html #pilotImg { opacity: 0; }
+html #osc, html #clients .mqp, html nav .mbtn, html footer #top, html #hero .fly, html #case [data-close], html #case .nav2, html #case .kh { display: none; }
+html .nsback { position: absolute; z-index: 2; left: calc(max(0px, 50% - 590px) + clamp(16px, 5vw, 64px)); top: 24px; }
+@media (min-width: 601px) {
+  html #clients { -webkit-mask-image: none; mask-image: none; }
+  html .marquee { width: auto; flex-wrap: wrap; row-gap: 18px; }
+  html .marquee span[aria-hidden] { display: none; }
+}

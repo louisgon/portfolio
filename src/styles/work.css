@@ -49,7 +49,7 @@
 .proj a.pic { display: block; }
 .proj h3 a { color: inherit; text-decoration: none; }
 .proj .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.proj .planet .moon, #case .cplanet .moon, #case .splanet .moon { position: absolute; left: 50%; top: 50%; border-radius: 50%; box-shadow: 0 0 8px rgb(200 220 255 / 18%); pointer-events: none; will-change: transform; backface-visibility: hidden; }
+.proj .planet .moon, #case .cplanet .moon, #case .splanet .moon, .flyp .moon { position: absolute; left: 50%; top: 50%; border-radius: 50%; box-shadow: 0 0 8px rgb(200 220 255 / 18%); pointer-events: none; will-change: transform; backface-visibility: hidden; }
 .proj .pic .edge, .proj .pic .scan { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; will-change: transform, opacity; backface-visibility: hidden; }
 .proj .pic .edge { border-radius: inherit; box-shadow: inset 0 0 0 1px rgb(143 211 255 / 70%), 0 0 0 1px rgb(143 211 255 / 30%); transition: opacity .4s var(--ease-out); }
 .proj .pic .scan { bottom: auto; height: 42%; background: linear-gradient(180deg, rgb(143 211 255 / 0%), rgb(143 211 255 / 10%) calc(100% - 1px), rgb(190 232 255 / 95%) calc(100% - 1px)); transform: translate3d(0, -100%, 0); }

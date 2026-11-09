@@ -50,6 +50,18 @@ function chromeOn(g: HTMLElement, pic: HTMLElement, scale: number) {
     tag.style.transform = `translate3d(0, ${((1 - shown) * 100).toFixed(2)}%, 0)`;
   };
 }
+function caseHudOn(g: HTMLElement, shot: HTMLElement, scale: number) {
+  const c = document.createElement('div'), hud = shot.querySelector('.hud')!.cloneNode() as HTMLElement;
+  c.className = 'chrome atcase';
+  c.style.width = `${shot.offsetWidth}px`;
+  c.style.height = `${shot.offsetHeight}px`;
+  c.style.transform = `scale3d(${scale}, ${scale}, 1)`;
+  c.append(hud);
+  g.append(c);
+  return (shown: number) => {
+    hud.style.opacity = String(shown);
+  };
+}
 function ghostAt(r: DOMRect, src: string, rad: number) { const g = document.createElement('div'); g.className = 'flyer'; g.setAttribute('aria-hidden', 'true'); g.innerHTML = `<img src="${src}" alt="">`; Object.assign(g.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, borderRadius: `${rad}px`, visibility: 'hidden' }); document.body.append(g); return (g.firstChild as HTMLImageElement).decode().catch(() => {}).then(() => g); }
 const FLYE = bez(0.65, 0, 0.2, 1);
 const PLANET_LAG = 140, HANDOFF = 120, UNSEEN = '0.001';
@@ -171,21 +183,21 @@ async function flyCase(i: number, pic: HTMLElement, step: Step) {
   pic.style.transition = 'none'; pic.style.transform = ''; const row = planetOf(i), a = pic.getBoundingClientRect(), [g, trip] = await Promise.all([ghostAt(a, PROJECTS[i].shot, 14), planetTrip(i, row, rowOpacity(row), 1), fillCase(i)]), show = chromeOn(g, pic, 1);
   g.style.visibility = ''; pic.style.visibility = 'hidden'; pic.style.transition = ''; S.boost = Math.max(S.boost, 0.6);
   document.body.classList.add('fly-out');
-  showCase(i, true); const shot = $('caseIn').querySelector<HTMLElement>('.hero-shot')!; shot.classList.add('held', 'shown'); const b = shot.getBoundingClientRect();
+  showCase(i, true); const shot = $('caseIn').querySelector<HTMLElement>('.hero-shot')!; shot.classList.add('held', 'shown'); const b = shot.getBoundingClientRect(), showCaseHud = caseHudOn(g, shot, a.width / b.width); showCaseHud(0);
   g.style.borderRadius = `${(14 + (16 * a.width) / b.width) / 2}px`; revealEl($('caseIn').querySelector('.chd')!); pend.forEach(revealEl); pend.clear();
-  await Promise.all([flyTo(g, a, shot, reduce ? 300 : 850, (e) => show(1 - clamp(e / 0.55))), trip?.fly(casePlanet(), reduce ? 300 : 850, () => 1, 0)]); shot.classList.remove('held'); g.remove(); pic.style.visibility = ''; document.body.classList.remove('fly-out');
+  await Promise.all([flyTo(g, a, shot, reduce ? 300 : 850, (e) => { show(1 - clamp(e / 0.55)); showCaseHud(clamp((e - 0.55) / 0.45)); }), trip?.fly(casePlanet(), reduce ? 300 : 850, () => 1, 0)]); shot.classList.remove('held'); g.remove(); pic.style.visibility = ''; document.body.classList.remove('fly-out');
   land($('caseIn').querySelector<HTMLElement>('.back')!, $('case')); TR.casing = false; idle();
 }
 async function flyBack(step: Step) {
   if (TR.busy) { TR.next = () => flyBack(step); return; } route(null, step); const pic = document.querySelector<HTMLElement>(`.proj[data-i="${caseI}"] .pic`), shot = $('caseIn').querySelector<HTMLElement>('.hero-shot');
   if (shot) { shot.style.transition = 'none'; shot.style.transform = ''; void shot.offsetWidth; } const b = shot && shot.getBoundingClientRect();
   if (reduce || !pic || !b || b.bottom < 60 || b.top > innerHeight - 60) { closeCase(); return; }
-  TR.busy = true; const [g, trip] = await Promise.all([ghostAt(b, PROJECTS[caseI].shot, 16), planetTrip(caseI, casePlanet(), 1, 0)]); g.style.visibility = ''; shot!.style.visibility = 'hidden';
+  TR.busy = true; const [g, trip] = await Promise.all([ghostAt(b, PROJECTS[caseI].shot, 16), planetTrip(caseI, casePlanet(), 1, 0)]), showCaseHud = caseHudOn(g, shot!, 1); g.style.visibility = ''; shot!.style.visibility = 'hidden';
   $('case').classList.add('leaving'); document.body.classList.add('fly-back');
   hideCase(); const proj = pic.closest<HTMLElement>('.proj')!; scrollToY(backY(proj));
   pic.style.transform = ''; proj.querySelectorAll('.rv').forEach(settle);
   const row = planetOf(caseI), a = pic.getBoundingClientRect(), show = chromeOn(g, pic, b.width / a.width); show(0); pic.style.visibility = 'hidden'; g.style.borderRadius = `${(16 + (14 * b.width) / a.width) / 2}px`;
-  await Promise.all([flyTo(g, b, pic, 800, (e) => show(clamp(e / 0.9))), trip?.fly(row, 800, () => rowOpacity(row), 1)]); pic.style.visibility = ''; g.remove(); document.body.classList.remove('fly-back'); $('case').classList.remove('leaving'); pend.forEach(revealEl); pend.clear();
+  await Promise.all([flyTo(g, b, pic, 800, (e) => { show(clamp(e / 0.9)); showCaseHud(1 - clamp(e / 0.45)); }), trip?.fly(row, 800, () => rowOpacity(row), 1)]); pic.style.visibility = ''; g.remove(); document.body.classList.remove('fly-back'); $('case').classList.remove('leaving'); pend.forEach(revealEl); pend.clear();
   document.documentElement.classList.remove('tr-lock'); lenis && lenis.start(); land(caseReturn(pic)!, pic.closest<HTMLElement>('.proj')); idle();
 }
 async function fadeBack(step: Step) {

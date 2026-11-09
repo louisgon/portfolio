@@ -22,8 +22,8 @@ function digitCells() {
   probe.style.cssText = 'position:absolute;visibility:hidden'; ref.style.cssText = 'position:absolute;visibility:hidden;display:inline-block;width:10em'; b.append(probe, ref);
   for (let d = 0; d < 10; d++) { probe.textContent = String(d); dw[d] = (probe.getBoundingClientRect().width / ref.getBoundingClientRect().width) * 10; }
   probe.remove(); ref.remove();
-  stats = statEls.map((el) => { const s = el.dataset.n!, w = [...s].map((c) => dw[+c]); el.textContent = '';
-    const cells = w.map((x) => { const c = document.createElement('span'), g = document.createElement('span'); c.style.cssText = `display:inline-flex;justify-content:center;width:${x.toFixed(4)}em`; g.style.cssText = 'display:inline-block;flex:none'; c.append(g); el.append(c); return g; });
+  stats = statEls.map((el) => { const s = el.dataset.n!, w = [...s].map((c) => dw[+c]), whole = document.createElement('span'); el.textContent = ''; whole.className = 'sr'; whole.textContent = `${s} `; el.append(whole);
+    const cells = w.map((x) => { const c = document.createElement('span'), g = document.createElement('span'); c.setAttribute('aria-hidden', 'true'); c.style.cssText = `display:inline-flex;justify-content:center;width:${x.toFixed(4)}em`; g.style.cssText = 'display:inline-block;flex:none'; c.append(g); el.append(c); return g; });
     return { n: +s, cells, w }; });
   showStats(0);
 }

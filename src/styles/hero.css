@@ -214,6 +214,7 @@
   #hero .panel .rs { gap: 24px; }
 }
 @media (max-width: 600px) {
+  #hero .hud::before { display: none; }
   #hero .hud .land { left: 4px; top: 4px; bottom: auto; min-width: 88px; height: 44px; }
   #hero .hud .pz { right: 4px; top: 4px; width: 44px; height: 44px; }
   #hero .hud .clk { left: 12px; top: 64px; }

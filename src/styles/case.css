@@ -12,7 +12,7 @@ body.case-open:not(.fly-out) nav, body.case-open:not(.fly-out) #hero, body.case-
 #case .hero-shot { position: relative; z-index: 1; margin: 28px 0 40px; border-radius: 16px; overflow: hidden; aspect-ratio: 16 / 10; box-shadow: 0 0 0 1px rgb(143 211 255 / 26%), 0 0 70px -14px rgb(80 170 255 / 32%), 0 40px 80px -40px #000; }
 #case .hero-shot .hud { inset: 14px; }
 #case .cpw { position: absolute; left: 0; right: 0; top: 0; height: min(760px, 100vh); overflow: hidden; pointer-events: none; }
-#case .cplanet { position: absolute; z-index: 0; right: clamp(-120px, -6vw, -40px); top: 40px; width: clamp(220px, 32vw, 460px); pointer-events: none; animation: cfloat 9s ease-in-out infinite alternate; }
+#case .cplanet { position: absolute; z-index: 0; right: clamp(-120px, -6vw, -40px); top: 126px; width: clamp(220px, 32vw, 460px); pointer-events: none; animation: cfloat 9s ease-in-out infinite alternate; }
 #case .cplanet img, #case .splanet img { position: relative; z-index: 1; width: 100%; display: block; }
 @keyframes cfloat { to { transform: translate3d(0, 18px, 0) rotate3d(0, 0, 1, 4deg); } }
 #case .top, #case .ttl, #case .eyebrow, #case h1, #case .lead { position: relative; z-index: 1; }

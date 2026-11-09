@@ -18,11 +18,11 @@ const spaceless: AstroIntegration = {
         await writeFile(path, html.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/g, (_, open: string, css: string, close: string) => open + squeeze(css) + close));
       }
       const cacheHashed = '/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n';
-      let headers = cacheHashed;
+      let everyPage = '/*\n  Strict-Transport-Security: max-age=31536000\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n';
       if (!index) {
-        headers += '/*\n  X-Robots-Tag: noindex\n';
+        everyPage += '  X-Robots-Tag: noindex\n';
       }
-      await writeFile(new URL('_headers', dir), headers);
+      await writeFile(new URL('_headers', dir), cacheHashed + everyPage);
     },
   },
 };

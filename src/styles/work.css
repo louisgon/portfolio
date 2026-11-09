@@ -36,8 +36,8 @@
 .proj .planet img { animation: pspin 26s ease-in-out infinite alternate; }
 .proj:nth-of-type(even) .planet img { animation-duration: 31s; animation-direction: alternate-reverse; }
 @keyframes pspin { from { transform: rotate3d(0, 0, 1, -5deg); } to { transform: rotate3d(0, 0, 1, 5deg); } }
-.proj .planet .glint { position: absolute; inset: 0; z-index: 1; overflow: hidden; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; pointer-events: none; }
-.proj .planet .glint::before { content: ""; position: absolute; top: 0; bottom: 0; left: -100%; width: 300%; background: linear-gradient(100deg, transparent 38%, rgb(255 240 220 / 30%) 48%, transparent 58%); animation: glint 9s ease-in-out infinite; will-change: transform; }
+.proj .planet .glint, .flyp .glint, #case .glint { position: absolute; inset: 0; z-index: 1; overflow: hidden; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; pointer-events: none; }
+.proj .planet .glint::before, .flyp .glint::before, #case .glint::before { content: ""; position: absolute; top: 0; bottom: 0; left: -100%; width: 300%; background: linear-gradient(100deg, transparent 38%, rgb(255 240 220 / 30%) 48%, transparent 58%); animation: glint 9s ease-in-out infinite; will-change: transform; }
 @keyframes glint { 0%, 30% { transform: translate3d(-34%, 0, 0); } 70%, 100% { transform: translate3d(34%, 0, 0); } }
 @media (max-width: 860px) { .traj { display: none; } }
 .proj .pic .hud, .proj .pic::after { transition: opacity .5s var(--ease-out); }

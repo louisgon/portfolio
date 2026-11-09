@@ -6,7 +6,7 @@ import { initMenu } from './menu';
 import { gpuPace, heroEnd, initOrbit, orbitTick } from './orbit';
 import { initMeteors } from './meteors';
 import { initStats, initWords, introEntranceTick, introWordsTick, observeStats } from './intro';
-import { holoTick, initRoles, rolesTick, telemetryTick } from './about';
+import { holoTick, initRoles, rolesTick } from './about';
 import { initOsc, oscTick } from './contact';
 import { busTick, initBus, initCards, stackTick } from './stack';
 import { initMarquee, marqueeTick } from './clients';
@@ -81,7 +81,6 @@ function frame(now: number) {
   workMoonsTick(now);
   caseMoonsTick(now);
   rolesTick();
-  telemetryTick(now);
   marqueeTick(dt, vel);
   navTick(now);
   holoTick();

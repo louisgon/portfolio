@@ -25,10 +25,10 @@ export async function keys(sites: Site[], out: string) {
     await page.evaluate(() => document.querySelector<HTMLElement>('.proj[data-i="1"] h3 a')!.focus());
     await page.keyboard.press('Tab'); r.onCaseStudy = await focus(page);
     await page.keyboard.press('Enter'); await page.waitForTimeout(2500); r.afterOpen = await focus(page);
-    r.title = await page.evaluate(() => document.querySelector('#case h2')?.getAttribute('aria-label') || document.querySelector('#case h2')?.textContent);
+    r.title = await page.evaluate(() => document.querySelector('#case h1')?.getAttribute('aria-label') || document.querySelector('#case h1')?.textContent);
     const trap: string[] = []; for (let i = 0; i < 6; i++) { await page.keyboard.press('Tab'); await page.waitForTimeout(80); trap.push(await focus(page)); } r.trap = trap;
     await page.keyboard.press('ArrowRight'); await page.waitForTimeout(2200); r.afterNext = await focus(page);
-    r.nextTitle = await page.evaluate(() => document.querySelector('#case h2')?.getAttribute('aria-label') || document.querySelector('#case h2')?.textContent);
+    r.nextTitle = await page.evaluate(() => document.querySelector('#case h1')?.getAttribute('aria-label') || document.querySelector('#case h1')?.textContent);
     await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(2200);
     await page.keyboard.press('Escape'); await page.waitForTimeout(2800); r.afterEscape = await focus(page);
     r.caseOpen = await page.evaluate(() => document.getElementById('case')!.classList.contains('on'));

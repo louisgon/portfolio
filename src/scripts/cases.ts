@@ -111,7 +111,18 @@ async function adopt(i: number) {
   await caseReady(); showCase(i, true); pend.forEach(revealEl); pend.clear(); idle(); land($('caseIn').querySelector<HTMLElement>('.back')!, $('case'));
 }
 
+function nameProjectLinks() {
+  document.querySelectorAll<HTMLElement>('.proj').forEach((row) => {
+    const label = ` for ${PROJECTS[Number(row.dataset.i)].title}`, [study, site] = row.querySelectorAll('.acts a'), name = document.createElement('span');
+    name.className = 'sr';
+    name.textContent = label;
+    study.append(name);
+    site.querySelector('.sr')!.prepend(label);
+  });
+}
+
 export function initCases() {
+  nameProjectLinks();
   caseIO = new IntersectionObserver((es) => es.forEach((e) => { if (!e.isIntersecting) return; caseIO.unobserve(e.target); if (TR.busy && !TR.casing) pend.add(e.target); else revealEl(e.target); }), { root: $('case'), threshold: 0.12 });
   setTimeout(() => (window.requestIdleCallback || setTimeout)(() => { if (!TR.busy && !$('case').classList.contains('on')) { fillCase(0).then(() => void $('case').offsetHeight); } }), 4000);
   const warm = (e: Event) => { const p = (e.target as Element).closest<HTMLElement>('.proj'); if (p && !TR.busy && !$('case').classList.contains('on')) fillCase(Number(p.dataset.i)); };

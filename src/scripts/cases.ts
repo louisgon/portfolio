@@ -52,13 +52,14 @@ function chromeOn(g: HTMLElement, pic: HTMLElement, scale: number) {
 }
 function ghostAt(r: DOMRect, src: string, rad: number) { const g = document.createElement('div'); g.className = 'flyer'; g.setAttribute('aria-hidden', 'true'); g.innerHTML = `<img src="${src}" alt="">`; Object.assign(g.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`, borderRadius: `${rad}px`, visibility: 'hidden' }); document.body.append(g); return (g.firstChild as HTMLImageElement).decode().catch(() => {}).then(() => g); }
 const FLYE = bez(0.65, 0, 0.2, 1);
-const PLANET_LAG = 140;
+const PLANET_LAG = 140, TILT_SETTLE = 1400;
+const settling = new WeakMap<HTMLElement, () => void>();
 type Disc = { x: number; y: number; d: number; r: number };
 const planetOf = (i: number) => document.querySelector<HTMLElement>(`.proj[data-i="${i}"] .planet`)!;
 const casePlanet = () => [...$('case').querySelectorAll<HTMLElement>('.cplanet, .splanet')].find((p) => p.offsetWidth)!;
 function disc(el: HTMLElement): Disc {
   const r = el.getBoundingClientRect(), m = new DOMMatrix(getComputedStyle(el).transform);
-  return { x: r.left + r.width / 2, y: r.top + r.height / 2, d: el.offsetWidth * Math.hypot(m.a, m.b), r: (Math.atan2(m.b, m.a) * 180) / Math.PI };
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2, d: el.offsetWidth * Math.hypot(m.a, m.b), r: (Math.atan2(m.b, m.a) * 180) / Math.PI + (parseFloat(getComputedStyle(el).rotate) || 0) };
 }
 const rowOpacity = (el: HTMLElement) => (parseFloat(el.style.getPropertyValue('--po')) || 0) * 0.95;
 const afterPaint = () => new Promise<void>((res) => requestAnimationFrame(() => requestAnimationFrame(() => res())));
@@ -68,8 +69,30 @@ function reveal(el: HTMLElement) {
     el.removeAttribute('style');
   }
 }
+const tiltProp = (el: HTMLElement) => (el.classList.contains('planet') ? '--tilt' : 'rotate');
+const setTilt = (el: HTMLElement, deg: number) => el.style.setProperty(tiltProp(el), tiltProp(el) === 'rotate' ? `${deg.toFixed(3)}deg` : deg.toFixed(3));
+function settleTilt(el: HTMLElement, tilt: number) {
+  const t0 = performance.now();
+  let live = true;
+  settling.set(el, () => { live = false; });
+  (function f(n: number) {
+    if (!live) {
+      return;
+    }
+    const k = Math.min(1, (n - t0) / TILT_SETTLE);
+    if (k < 1) {
+      setTilt(el, tilt * (1 - FLYE(k)));
+      requestAnimationFrame(f);
+      return;
+    }
+    settling.delete(el);
+    el.style.removeProperty(tiltProp(el));
+    reveal(el);
+  })(t0);
+}
 async function planetTrip(i: number, source: HTMLElement, opacity: number, dimmed: number) {
   const from = disc(source), g = document.createElement('div');
+  settling.get(source)?.();
   g.className = 'flyp';
   g.setAttribute('aria-hidden', 'true');
   g.innerHTML = `<img src="${PROJECTS[i].planet}" alt=""><img class="dim" src="${PROJECTS[i].planet}" alt="">${moonsHTML(i)}`;
@@ -78,6 +101,8 @@ async function planetTrip(i: number, source: HTMLElement, opacity: number, dimme
   await Promise.all([...g.querySelectorAll('img')].map((m) => m.decode().catch(() => {})));
   return {
     fly(target: HTMLElement, ms: number, endOpacity: () => number, endDim: number) {
+      settling.get(target)?.();
+      target.style.removeProperty(tiltProp(target));
       const small = innerWidth <= 860, start = disc(target);
       const dimEl = g.children[1] as HTMLElement, big = Math.max(from.d, start.d), lag = small ? 0 : PLANET_LAG, travel = ms + lag, fades = target.classList.contains('splanet');
       if (fades) {
@@ -86,13 +111,16 @@ async function planetTrip(i: number, source: HTMLElement, opacity: number, dimme
       }
       Object.assign(g.style, { left: `${from.x - big / 2}px`, top: `${from.y - big / 2}px`, width: `${big}px`, height: `${big}px`, visibility: '' });
       target.style.visibility = 'hidden';
-      afterPaint().then(() => { source.style.visibility = 'hidden'; });
+      afterPaint().then(() => {
+        source.style.visibility = 'hidden';
+        source.style.removeProperty(tiltProp(source));
+      });
       return new Promise<void>((res) => {
         const t0 = performance.now();
         (function f(n: number) {
-          const k = Math.min(1, (n - t0) / travel), e = FLYE(k), b = disc(target), sc = (from.d + (b.d - from.d) * e) / big, turn = from.r + (b.r - from.r) * e;
+          const k = Math.min(1, (n - t0) / travel), e = FLYE(k), b = disc(target), sc = (from.d + (b.d - from.d) * e) / big;
           const dx = b.x - from.x, dy = b.y - from.y, len = Math.hypot(dx, dy) || 1, lift = small ? 0 : Math.sin(Math.PI * e) * Math.min(90, len * 0.14), side = dx > 0 ? -1 : 1;
-          g.style.transform = `translate3d(${(dx * e + (-dy / len) * lift * side).toFixed(2)}px, ${(dy * e + (dx / len) * lift * side).toFixed(2)}px, 0) rotate3d(0, 0, 1, ${turn.toFixed(3)}deg) scale3d(${sc.toFixed(4)}, ${sc.toFixed(4)}, 1)`;
+          g.style.transform = `translate3d(${(dx * e + (-dy / len) * lift * side).toFixed(2)}px, ${(dy * e + (dx / len) * lift * side).toFixed(2)}px, 0) rotate3d(0, 0, 1, ${from.r.toFixed(3)}deg) scale3d(${sc.toFixed(4)}, ${sc.toFixed(4)}, 1)`;
           g.style.opacity = (opacity + (endOpacity() - opacity) * e).toFixed(3);
           dimEl.style.opacity = (dimmed + (endDim - dimmed) * e).toFixed(3);
           orbit(g, i, n);
@@ -107,10 +135,13 @@ async function planetTrip(i: number, source: HTMLElement, opacity: number, dimme
           target.style.removeProperty('transition');
           target.style.removeProperty('opacity');
         }
+        const tilt = from.r - disc(target).r;
+        setTilt(target, tilt);
         reveal(target);
         await afterPaint();
         g.remove();
         reveal(source);
+        settleTilt(target, tilt);
       });
     },
   };

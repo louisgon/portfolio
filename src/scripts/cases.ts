@@ -69,9 +69,6 @@ function reveal(el: HTMLElement) {
   }
 }
 async function planetTrip(i: number, source: HTMLElement, opacity: number, dimmed: number) {
-  if (innerWidth <= 860) {
-    return null;
-  }
   const from = disc(source), g = document.createElement('div');
   g.className = 'flyp';
   g.setAttribute('aria-hidden', 'true');
@@ -81,15 +78,20 @@ async function planetTrip(i: number, source: HTMLElement, opacity: number, dimme
   await Promise.all([...g.querySelectorAll('img')].map((m) => m.decode().catch(() => {})));
   return {
     fly(target: HTMLElement, ms: number, endOpacity: () => number, endDim: number) {
-      const dimEl = g.children[1] as HTMLElement, big = Math.max(from.d, disc(target).d);
+      const small = innerWidth <= 860, start = disc(target);
+      const dimEl = g.children[1] as HTMLElement, big = Math.max(from.d, start.d), lag = small ? 0 : PLANET_LAG, travel = ms + lag, fades = target.classList.contains('splanet');
+      if (fades) {
+        target.style.transition = 'none';
+        target.style.opacity = '1';
+      }
       Object.assign(g.style, { left: `${from.x - big / 2}px`, top: `${from.y - big / 2}px`, width: `${big}px`, height: `${big}px`, visibility: '' });
       target.style.visibility = 'hidden';
       afterPaint().then(() => { source.style.visibility = 'hidden'; });
       return new Promise<void>((res) => {
         const t0 = performance.now();
         (function f(n: number) {
-          const k = Math.min(1, (n - t0) / (ms + PLANET_LAG)), e = FLYE(k), b = disc(target), sc = (from.d + (b.d - from.d) * e) / big, turn = from.r + (b.r - from.r) * e;
-          const dx = b.x - from.x, dy = b.y - from.y, len = Math.hypot(dx, dy) || 1, lift = Math.sin(Math.PI * e) * Math.min(90, len * 0.14), side = dx > 0 ? -1 : 1;
+          const k = Math.min(1, (n - t0) / travel), e = FLYE(k), b = disc(target), sc = (from.d + (b.d - from.d) * e) / big, turn = from.r + (b.r - from.r) * e;
+          const dx = b.x - from.x, dy = b.y - from.y, len = Math.hypot(dx, dy) || 1, lift = small ? 0 : Math.sin(Math.PI * e) * Math.min(90, len * 0.14), side = dx > 0 ? -1 : 1;
           g.style.transform = `translate3d(${(dx * e + (-dy / len) * lift * side).toFixed(2)}px, ${(dy * e + (dx / len) * lift * side).toFixed(2)}px, 0) rotate3d(0, 0, 1, ${turn.toFixed(3)}deg) scale3d(${sc.toFixed(4)}, ${sc.toFixed(4)}, 1)`;
           g.style.opacity = (opacity + (endOpacity() - opacity) * e).toFixed(3);
           dimEl.style.opacity = (dimmed + (endDim - dimmed) * e).toFixed(3);
@@ -101,6 +103,10 @@ async function planetTrip(i: number, source: HTMLElement, opacity: number, dimme
           res();
         })(t0);
       }).then(async () => {
+        if (fades) {
+          target.style.removeProperty('transition');
+          target.style.removeProperty('opacity');
+        }
         reveal(target);
         await afterPaint();
         g.remove();

@@ -112,7 +112,7 @@ function drawMoons(B: { s: number; x: number; y: number }, br: number, t: number
 
 function drawLife(B: { x: number; y: number; w: number; h: number }, t: number, fade: number) {
   const k = clamp((F.now - lifeT0) / 1200) * DV.ba * fade; if (!haze || !hzBuf || !hzX || k <= 0.004) return;
-  const { W, H } = V, e = scene.edge, hy = scene.vp.y, Hs = Math.max(H - hy, H * 0.3), cx = B.x + B.w / 2, bw = Math.ceil(W / 4), bh = Math.ceil(H / 4), sc = bw / W, x = hzX;
+  const { W, H } = V, e = scene.edge, hy = scene.vp.y, Hs = Math.max(H - hy, H * 0.3), cx = B.x + B.w / 2, bw = Math.ceil(W / 4), bh = Math.ceil(H / 4), sc = bw / W, x = hzX, flat = Math.min(W, H) <= 600 ? Hs / (2.4 * HZ.k) * sc : 0;
   if (hzBuf.width !== bw || hzBuf.height !== bh) { hzBuf.width = bw; hzBuf.height = bh; } else x.clearRect(0, 0, bw, bh);
   const v0 = HZ.v * t * HZ.k, u0 = HZ.wind * t * HZ.k;
   x.fillStyle = haze;
@@ -120,7 +120,13 @@ function drawLife(B: { x: number; y: number; w: number; h: number }, t: number, 
     const ya = j / sc, yb = (j + 1) / sc; if (ya <= hy + 1) continue;
     const za = Hs / (ya - hy), zb = Hs / (yb - hy), zm = (za + zb) / 2, a = sm(5.5, 2.6, zm) * (1 - 0.3 * sm(1.4, 1, zm)); if (a < 0.01) continue;
     const su = Hs / (zm * HZ.k) * sc, va = za * HZ.k + v0, vb = zb * HZ.k + v0;
-    PM.a = su; PM.d = 1 / (vb - va); PM.e = cx * sc - u0 * su; PM.f = j - va * PM.d; haze.setTransform(PM);
+    // row by row perspective reads as a rolling wave on a tall phone
+    if (flat) {
+      PM.a = PM.d = flat; PM.e = cx * sc - u0 * flat; PM.f = v0 * flat;
+    } else {
+      PM.a = su; PM.d = 1 / (vb - va); PM.e = cx * sc - u0 * su; PM.f = j - va * PM.d;
+    }
+    haze.setTransform(PM);
     x.globalAlpha = a; x.fillRect(0, j, bw, 1);
   }
   ctx.save(); ctx.beginPath();

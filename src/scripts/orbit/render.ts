@@ -24,7 +24,11 @@ export function drawRear(x: number, y: number, sw: number, sqy: number, al: numb
   ctx.globalCompositeOperation = 'source-over';
   ctx.save(); ctx.translate(x, y); ctx.rotate(rs.bank * 0.55); ctx.scale(1 - Math.abs(rs.bank) * 0.18, sqy);
   if (al < 1) ctx.globalAlpha = al;
-  ctx.drawImage(A.ship, -sw / 2, -shh / 2, sw, shh);
+  let hull: CanvasImageSource = A.ship;
+  if (LIT.base && sw * V.DPR <= LIT.base.width * 1.05) {
+    hull = LIT.base;
+  }
+  ctx.drawImage(hull, -sw / 2, -shh / 2, sw, shh);
   if (lit > 0.01 && LIT.shade && LIT.light) {
     ctx.globalAlpha = lit; ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(LIT.shade, -sw / 2, -shh / 2, sw, shh);
     ctx.globalAlpha = lit * Math.min(1, scene.glow); ctx.globalCompositeOperation = 'lighter'; ctx.drawImage(LIT.light, -sw / 2, -shh / 2, sw, shh);

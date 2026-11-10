@@ -1,5 +1,5 @@
 import { nextTask } from '../util';
-import { A, CAPH, ctx, FAC, G, mk, ship, TAU, TYPES, V } from './core';
+import { A, CAPH, ctx, FAC, G, mk, playRatio, ship, TAU, TYPES, V } from './core';
 import { ember, glow, SPR } from './art';
 
 export type Spr = { c: HTMLCanvasElement; w: number; h: number; iw: number; ih: number; pad: number };
@@ -140,7 +140,7 @@ function engineSprite(R: Spr, pts: readonly (readonly [number, number])[], er: n
 }
 
 function prepType(f: number, i: number) {
-  const { DPR, U } = V, F = FAC[f], T = TYPES[i];
+  const { U } = V, DPR = playRatio(), F = FAC[f], T = TYPES[i];
   const img = A.art[f][i], dwf = T.dw || CAPH * img.width / img.height / T.w, outW = Math.min(img.width, Math.ceil(T.w * dwf * Math.max(U, 0.7) * 1.35 * DPR));
   S.dwf[f][i] = dwf;
   S.n[f][i] = topSprite(img, outW, '#05070d');
@@ -159,7 +159,7 @@ let starSeed = 0;
 const srand = () => { starSeed = (starSeed + 0x6d2b79f5) | 0; let t = Math.imul(starSeed ^ (starSeed >>> 15), 1 | starSeed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 const pot = (px: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, 2 ** Math.round(Math.log2(px))));
 function starLayer(css: number, density: number, r0: number, r1: number, a0: number, a1: number, halo: number, seed: number, k: number): Layer {
-  const { DPR } = V, size = pot(css * DPR, 256, 2048), c = mk(size), x = c.getContext('2d')!, side = size / DPR, n = Math.round(side * side * density);
+  const DPR = playRatio(), size = pot(css * DPR, 256, 2048), c = mk(size), x = c.getContext('2d')!, side = size / DPR, n = Math.round(side * side * density);
   starSeed = seed;
   for (let i = 0; i < n; i++) {
     const px = srand() * size, py = srand() * size, r = (r0 + (r1 - r0) * srand() ** 2.2) * DPR, a = a0 + (a1 - a0) * srand(), warm = srand(), col = warm < 0.18 ? '255,226,190' : warm < 0.5 ? '214,228,255' : '240,246,255';
@@ -174,7 +174,7 @@ function starLayer(css: number, density: number, r0: number, r1: number, a0: num
 function nebulaLayer(): Layer | null {
   const img = A.nebula; if (!img) return null;
   // the tile is stored at 1024 at most but keeps the extent a 2048 tile drew at, so the nebula keeps its scale
-  const { DPR, W, H } = V, ext = pot(Math.max(W, H) * 1.1 * DPR, 512, 2048), size = Math.min(ext, 1024, img.width), c = mk(size), x = c.getContext('2d')!;
+  const { W, H } = V, DPR = playRatio(), ext = pot(Math.max(W, H) * 1.1 * DPR, 512, 2048), size = Math.min(ext, 1024, img.width), c = mk(size), x = c.getContext('2d')!;
   x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, size, size);
   x.fillStyle = 'rgba(2,4,10,0.22)'; x.fillRect(0, 0, size, size);
   return { pat: ctx.createPattern(c, 'repeat')!, size, k: 0.3, ext };
@@ -182,7 +182,7 @@ function nebulaLayer(): Layer | null {
 
 export function prepSprites() {
   if (!A.ready || !A.shipTop) return;
-  const { DPR, U, Z, W, H } = V, key = `${DPR}|${U.toFixed(2)}|${Z.toFixed(3)}|${Math.round(Math.max(W, H))}`; if (key === S.key) return; S.key = key;
+  const { U, Z, W, H } = V, DPR = playRatio(), key = `${DPR}|${U.toFixed(2)}|${Z.toFixed(3)}|${Math.round(Math.max(W, H))}`; if (key === S.key) return; S.key = key;
   const top = A.shipTop, others = [0, 1, 2].filter((f) => f !== G.fac);
   jobs.length = 0;
   jobs.push(...factionJobs(G.fac, key), () => { S.neb = nebulaLayer(); },

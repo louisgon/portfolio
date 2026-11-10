@@ -29,7 +29,7 @@ export async function perf(c: Ctx) {
   const di = await rest(c, { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 }, 'desk'), pi = await rest(c, { ...devices['Pixel 7'] }, 'phone');
   console.log(`      idle desktop 1440x900 at 2x ${JSON.stringify(di)}\n      idle Pixel 7 profile ${JSON.stringify(pi)}`);
   c.ok('the idle hero holds 60fps on desktop with little main thread work', di.median <= 17.5 && di.p95 <= 20 && di.work50 <= 2.5, di);
-  c.ok('the idle hero on phones keeps its 1.5 pixel ratio and little main thread work', pi.dpr <= 1.5 && pi.median <= 17.5 && pi.work50 <= 3, pi);
+  c.ok('the idle hero on phones rests at the screen ratio up to 3 with little main thread work', pi.dpr > 1.5 && pi.dpr <= 3 && pi.median <= 17.5 && pi.work50 <= 3, pi);
 
   const desk = await run(c, { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 }, 'desk');
   console.log(`      desktop 1440x900 at 2x ${JSON.stringify(desk)}`);

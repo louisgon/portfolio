@@ -57,7 +57,10 @@ export const PIX = new WeakMap<HTMLImageElement, ImageBitmap>();
 export const pix = (img: HTMLImageElement): CanvasImageSource => PIX.get(img) ?? img;
 export const mk = (w: number, h = w) => { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; };
 
-export const V = { W: 0, H: 0, DPR: 1, tall: false, U: 1, Z: 1, vw: 1, vh: 1, far: 600, dprCap: 1.5, gpuCap: 0.6, vis: true };
+export const OPEN = 3, FINE = devicePixelRatio >= 2;
+export const V = { W: 0, H: 0, DPR: 1, tall: false, U: 1, Z: 1, vw: 1, vh: 1, far: 600, dprCap: 1.5, restCap: FINE ? 3 : 1.5, gpuCap: FINE ? OPEN : 0.6, vis: true };
+const ratio = (cap: number) => Math.min(devicePixelRatio || 1, coarse ? cap : 2, V.gpuCap);
+export const playRatio = () => ratio(V.dprCap), restRatio = () => ratio(V.restCap);
 export const A = { ready: false, base: false, bg: null as HTMLImageElement | null, bgOld: null as HTMLImageElement | null, bgT: 0, ship: null as HTMLImageElement | null, shipTop: null as HTMLImageElement | null, art: [] as HTMLImageElement[][], nebula: null as HTMLImageElement | null, meta: null as Meta | null, aspR: 0.38, aspT: 0.855, tsq0: 0.22 };
 export const scene = { vp: { x: 0, y: 0 }, sun: { x: 0.6, y: 0.25 }, limb: 0.3, edge: [0.3, 0, 0], lit: 1, glow: 1, bx: 0, by: 0, bz: 1.07 };
 export const rs = { x: 0, y: 0, vx: 0, vy: 0, tx: 0.5, ty: 0.66, sc: 1, bank: 0, base: 300, restX: 0.5, restY: 0.66, noz: [[0.33, 0.62], [0.67, 0.62]] };

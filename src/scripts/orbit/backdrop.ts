@@ -1,12 +1,12 @@
-import { reduce } from '../state';
+import { HI, reduce } from '../state';
 import { nextTask } from '../util';
-import { A, C, clamp, ctx, DV, F, G, mk, pix, rand, scene, screen, sm, sprite, TAU, V, VP } from './core';
+import { A, C, clamp, ctx, DV, F, FINE, G, mk, OPEN, pix, rand, restRatio, scene, screen, sm, sprite, TAU, V, VP } from './core';
 import { SPR } from './art';
 import { bright, moonR, moonRef, plate, type Scan } from './paint';
 
 type Star = { x: number; y: number; r: number; p: number; s: number };
 type Dust = { a: number; d: number; s: number };
-type Moon = { x: number; y: number; r: number; R: number; plate: HTMLCanvasElement; disc: HTMLCanvasElement; dx: number; dy: number; hide: boolean; sk: number };
+type Moon = { x: number; y: number; r: number; R: number; plate: HTMLCanvasElement; disc: HTMLCanvasElement; dx: number; dy: number; hide: boolean; sk: number; sx: number; sy: number; vx: number; vy: number; sa: number };
 type Mote = { x: number; y: number; s: number; l: number };
 type Twinkle = { x: number; y: number; r: number; p: number; s: number };
 let stars: Star[] = [], dust: Dust[] = [];
@@ -14,7 +14,8 @@ export let streaks: Dust[] = [], motes: Mote[] = [], twinkles: Twinkle[] = [];
 const sats = [{ p: 0.1, v: 0.012, y: 0.12, warm: false }, { p: 0.62, v: 0.008, y: 0.2, warm: true }];
 const PM = new DOMMatrix();
 let clear: number[][] = [], lit: Scan['lit'] | null = null;
-const MOONGAP = 34;
+const MOONGAP = 34, GLIDE = 4.5;
+let drift = 0, landed = false;
 let haze: CanvasPattern | null = null, hzBuf: HTMLCanvasElement | null = null, hzX: CanvasRenderingContext2D | null = null, lifeT0 = 0, flare: HTMLCanvasElement | null = null, glow: HTMLCanvasElement | null = null, moons: Moon[] = [];
 const hash = (x: number, y: number) => { let h = (Math.imul(x, 374761393) + Math.imul(y, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 const pnoise = (x: number, y: number, px: number, py: number) => { const xi = Math.floor(x), yi = Math.floor(y), u = x - xi, v = y - yi, h = (i: number, j: number) => hash(((i % px) + px) % px, ((j % py) + py) % py), a = h(xi, yi), b = h(xi + 1, yi), c = h(xi, yi + 1), d = h(xi + 1, yi + 1), su = u * u * (3 - 2 * u), sv = v * v * (3 - 2 * v); return a + (b - a) * su + (c - a) * sv + (a - b - c + d) * su * sv; };
@@ -60,9 +61,40 @@ export async function prepMoons(img: HTMLImageElement | null, sc: Scan | null, s
     const R = moonR(r, sk), s = R * 2, c = mk(s), x = c.getContext('2d', { willReadFrequently: true })!; x.drawImage(pix(img), mx - R, my - R, s, s, 0, 0, s, s);
     const disc = mk(s), q = disc.getContext('2d')!; q.drawImage(c, 0, 0); q.globalCompositeOperation = 'destination-in';
     const f = q.createRadialGradient(R, R, r, R, R, r + 4 * sk); f.addColorStop(0, '#000'); f.addColorStop(1, 'rgba(0,0,0,0)'); q.fillStyle = f; q.fillRect(0, 0, s, s);
-    out.push({ x: mx, y: my, r, R, plate: plate(pix(img), c, sc.moons![i].best, sc.moons![i].off, r, R, sk), disc, dx: 0, dy: 0, hide: false, sk });
+    out.push({ x: mx, y: my, r, R, plate: plate(pix(img), c, sc.moons![i].best, sc.moons![i].off, r, R, sk), disc, dx: 0, dy: 0, hide: false, sk, sx: 0, sy: 0, vx: 0, vy: 0, sa: 1 });
   }
   moons = out; lit = sc.lit; placeMoons();
+  if (HI.planet >= 1) {
+    moons.forEach(settle);
+  }
+}
+function settle(m: Moon) { m.sx = m.dx; m.sy = m.dy; m.vx = m.vy = 0; m.sa = m.hide ? 0 : 1; }
+function toward(v: number, to: number, k: number) { const n = v + (to - v) * (1 - Math.exp(-k)); return Math.abs(to - n) < 0.002 ? to : n; }
+function glideMoons(dt: number) {
+  if (HI.planet < 1) {
+    return;
+  }
+  if (HI.skip && !landed) {
+    landed = true;
+    drift = reduce ? 0 : 1;
+    moons.forEach(settle);
+  }
+  if (!reduce) {
+    drift = toward(drift, 1, dt / 0.8);
+  }
+  for (const m of moons) {
+    const far = Math.abs(m.dx - m.sx) + Math.abs(m.dy - m.sy) > 0.01, gone = m.hide || (reduce && far);
+    m.sa = toward(m.sa, gone ? 0 : 1, dt / 0.14);
+    if (m.hide) {
+      continue;
+    }
+    if (m.sa < 0.004 || !far) {
+      m.sx = m.dx; m.sy = m.dy; m.vx = m.vy = 0;
+    } else if (!reduce) {
+      m.vx += (GLIDE * GLIDE * (m.dx - m.sx) - 2 * GLIDE * m.vx) * dt; m.sx += m.vx * dt;
+      m.vy += (GLIDE * GLIDE * (m.dy - m.sy) - 2 * GLIDE * m.vy) * dt; m.sy += m.vy * dt;
+    }
+  }
 }
 
 export function keepMoons(rects: number[][]) { clear = rects; placeMoons(); }
@@ -99,13 +131,14 @@ function placeMoons() {
 
 function drawMoons(B: { s: number; x: number; y: number }, br: number, t: number) {
   const k = 1 - sm(0, 0.12, VP.p); if (!moons.length || k <= 0) return;
-  const ox = G.px * 9 + 2.5 * Math.sin(t * 0.05), oy = G.py * 4 + 1.2 * Math.sin(t * 0.037 + 1);
+  glideMoons(F.rdt);
+  const ox = (G.px * 9 + 2.5 * Math.sin(t * 0.05)) * drift, oy = (G.py * 4 + 1.2 * Math.sin(t * 0.037 + 1)) * drift;
   for (let i = 0; i < moons.length; i++) {
-    const m = moons[i], X = B.x + (m.x - m.R) * B.s, Y = B.y + (m.y - m.R) * B.s, S = m.R * 2 * B.s, z = i ? 0.7 : 1, MX = X + m.dx * B.s + ox * z, MY = Y + m.dy * B.s + oy * z;
-    ctx.globalAlpha = DV.ba * k; ctx.drawImage(m.plate, X, Y, S, S);
-    if (m.hide) continue;
-    ctx.drawImage(m.disc, MX, MY, S, S);
-    ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = DV.ba * k * 0.16 * clamp((br - 0.82) / 0.34); ctx.drawImage(m.disc, MX, MY, S, S); ctx.globalCompositeOperation = 'source-over';
+    const m = moons[i], X = B.x + (m.x - m.R) * B.s, Y = B.y + (m.y - m.R) * B.s, S = m.R * 2 * B.s, z = i ? 0.7 : 1, MX = X + m.sx * B.s + ox * z, MY = Y + m.sy * B.s + oy * z, a = DV.ba * k;
+    ctx.globalAlpha = a; ctx.drawImage(m.plate, X, Y, S, S);
+    if (m.sa < 0.004) continue;
+    ctx.globalAlpha = a * m.sa; ctx.drawImage(m.disc, MX, MY, S, S);
+    ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = a * m.sa * 0.16 * clamp((br - 0.82) / 0.34); ctx.drawImage(m.disc, MX, MY, S, S); ctx.globalCompositeOperation = 'source-over';
   }
   ctx.globalAlpha = 1;
 }
@@ -137,10 +170,27 @@ function drawLife(B: { x: number; y: number; w: number; h: number }, t: number, 
 }
 
 const FEATHER = 16;
+const SOFT = new WeakMap<HTMLImageElement, HTMLCanvasElement>();
+export function soften(img: HTMLImageElement | null) {
+  if (!img || !FINE || V.gpuCap < OPEN || !V.W) {
+    return;
+  }
+  const nw = img.naturalWidth, nh = img.naturalHeight, w = Math.ceil(nw * Math.max(V.W / nw, V.H / nh) * scene.bz * restRatio());
+  if (w > nw * 0.9) {
+    SOFT.delete(img);
+    return;
+  }
+  if (SOFT.get(img)?.width === w) {
+    return;
+  }
+  const c = mk(w, Math.round(w * nh / nw)), x = c.getContext('2d')!;
+  x.imageSmoothingQuality = 'high'; x.drawImage(pix(img), 0, 0, c.width, c.height);
+  SOFT.set(img, c);
+}
 function cover(img: HTMLImageElement | null, ox: number, oy: number, z: number, fk = 0) {
   const { W, H } = V;
   if (!img) { ctx.fillStyle = '#0a0e1c'; ctx.fillRect(0, 0, W, H); return { s: 1, x: 0, y: 0, w: W, h: H }; }
-  const nw = img.naturalWidth, nh = img.naturalHeight, s = Math.max(W / nw, H / nh) * z, w = nw * s, h = nh * s, x = (W - w) / 2 + ox, y = (H - h) / 2 + oy, src = pix(img);
+  const iw = img.naturalWidth, ih = img.naturalHeight, s = Math.max(W / iw, H / ih) * z, w = iw * s, h = ih * s, x = (W - w) / 2 + ox, y = (H - h) / 2 + oy, sc = SOFT.get(img), soft = !!sc && w * V.DPR <= sc.width * 1.06, src = soft ? sc : pix(img), nw = soft ? sc.width : iw, nh = soft ? sc.height : ih;
   if (fk <= 0) ctx.drawImage(src, x, y, w, h);
   else {
     const a0 = ctx.globalAlpha, band = 0.13, sb = nh * band / FEATHER, db = h * band / FEATHER;

@@ -1,9 +1,9 @@
 import { DATA } from '../data';
 import { HI, reduce } from '../state';
 import { $, nextTask, out, sstep } from '../util';
-import { A, base, BOOST, C, cam, clamp, coarse, ctx, D, DV, egg, eio, eout, F, FAC, G, game, GZ0, HOLD, initCore, input, LAND, lerp, PIX, restW, rs, scene, screen, setGame, ship, shipR, shipW, sm, STICK, T, TYPES, V, VP } from './core';
+import { A, base, BOOST, C, cam, clamp, coarse, ctx, D, DV, egg, eio, eout, F, FAC, G, game, OPEN, playRatio, restRatio, GZ0, HOLD, initCore, input, LAND, lerp, PIX, restW, rs, scene, screen, setGame, ship, shipR, shipW, sm, STICK, T, TYPES, V, VP } from './core';
 import { initArt, LIT, prepLight, prepLightSoon } from './art';
-import { drawOrbit, initBackdrop, keepMoons, prepMoons } from './backdrop';
+import { drawOrbit, initBackdrop, keepMoons, prepMoons, soften } from './backdrop';
 import { edge, locate, moons, nozzles, type Scan } from './paint';
 import PAINT from '../../lib/paint.json';
 import { hudTick, measureLane, showBest, updateLabels } from './hud';
@@ -13,7 +13,7 @@ import { played, store } from './store';
 
 const metas = new Map<string, Scan>(), file = (src: string) => src.slice(src.lastIndexOf('/') + 1);
 const shipped = (src: string) => (PAINT.paintings as Record<string, Scan>)[file(src)], shipNoz = (src: string) => (PAINT.ships as Record<string, number[][]>)[file(src)];
-let lab: typeof import('./test') | null = null, last = 0, slowFrames = 0, shown = '', flyShown = '0.000', shipAt = 0, flyT = 0, bgOff = false, pic: HTMLImageElement, rested: Promise<unknown> | null = null, loading: Promise<void> | null = null;
+let lab: typeof import('./test') | null = null, last = 0, slowFrames = 0, shown = '', flyShown = '0.000', shipAt = 0, flyT = 0, bgOff = false, pic: HTMLImageElement, rested: Promise<unknown> | null = null, loading: Promise<void> | null = null, flying = false;
 
 export let starVis = 0;
 
@@ -26,8 +26,13 @@ function measurePace(now: number, iv: number) {
   pace.n++; if (iv > PACE.slow) { pace.slow++; pace.sum += iv; }
   if (pace.n < PACE.n) return;
   const slow = pace.slow >= (pace.gap ? PACE.n / 2 : PACE.n - 2);
+  if (slow && coarse && V.restCap > V.dprCap && V.gpuCap >= OPEN) {
+    V.restCap = V.dprCap; pace.n = pace.slow = pace.sum = 0;
+    size();
+    return;
+  }
   pace.wait = slow && pace.gap ? Math.min(pace.wait * 2, 60000) : PACE.wait;
-  pace.v++; if (!slow && V.gpuCap < 2) sharpen(2); else if (pace.v === 2 && slow && V.gpuCap > 0.6) sharpen(0.6);
+  pace.v++; if (!slow && V.gpuCap < OPEN) sharpen(OPEN); else if (pace.v === 2 && slow && V.gpuCap > 0.6) sharpen(0.6);
   pace.gap = slow ? clamp(2 * pace.sum / pace.slow, 66, 250) : 0; pace.t = now; pace.known = true; pace.n = pace.slow = pace.sum = 0;
 }
 function sharpen(cap: number) { if (V.gpuCap !== cap) { V.gpuCap = cap; if (game) game.S.key = ''; size(); } }
@@ -54,7 +59,7 @@ async function scanBg(img: HTMLImageElement, step: () => Promise<void>) {
 async function useBg(img: HTMLImageElement | null, step = async () => {}, soft = false) {
   if (!img || !img.naturalWidth) { A.bg = null; return; }
   const m = await scanBg(img, step);
-  A.bg = img; A.meta = m; scene.sun = m.sun; scene.limb = m.limb; scene.edge = m.edge; await step(); await prepMoons(img, m, soft ? step : undefined); await step(); await light(soft);
+  A.bg = img; A.meta = m; scene.sun = m.sun; scene.limb = m.limb; scene.edge = m.edge; await step(); soften(img); await step(); await prepMoons(img, m, soft ? step : undefined); await step(); await light(soft);
 }
 async function swapBg(img: HTMLImageElement | null) {
   if (!img || !A.bg || img.src === A.bg.src) return;
@@ -92,7 +97,7 @@ function light(soft = false) {
   if (!A.ship) return;
   const { W, H } = V, img = A.bg; let sx = W * scene.sun.x, sy = H * scene.sun.y;
   if (img) { const nw = img.naturalWidth, nh = img.naturalHeight, s = Math.max(W / nw, H / nh) * 1.07, w = nw * s, h = nh * s; sx = (W - w) / 2 + scene.sun.x * w; sy = (H - h) / 2 + scene.sun.y * h; }
-  return (soft ? prepLightSoon : prepLight)(sx - W * rs.restX, sy - H * rs.restY, rs.base * V.DPR * 1.15);
+  return (soft ? prepLightSoon : prepLight)(sx - W * rs.restX, sy - H * rs.restY, rs.base * restRatio() * 1.15);
 }
 
 function boost(p: number) {
@@ -113,7 +118,7 @@ function boost(p: number) {
 
 function size() {
   const r = D.hero.getBoundingClientRect(), oW = V.W, oH = V.H, oU = V.U, oB = rs.base, cv = D.cv;
-  V.W = r.width; V.H = r.height; V.DPR = Math.min(devicePixelRatio || 1, coarse ? V.dprCap : 2, V.gpuCap);
+  V.W = r.width; V.H = r.height; V.DPR = flying ? playRatio() : restRatio();
   const w = Math.round(V.W * V.DPR), h = Math.round(V.H * V.DPR); if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
   ctx.setTransform(V.DPR, 0, 0, V.DPR, 0, 0);
   const { W, H } = V, tall = (V.tall = W / H < 0.85);
@@ -128,6 +133,7 @@ function size() {
   if (G.on && oW && oW !== W) { input.stick = null; game!.pause(); }
   if (G.on) measureLane();
   game?.prepSprites();
+  soften(A.bg);
 }
 
 let freeT = 0;
@@ -209,13 +215,20 @@ export function orbitTick(now: number, hp: number) {
   F.fc++;
   if (import.meta.env.MODE === 'test') T.draws++;
   const w0 = performance.now(), { W, H } = V, iv = now - last, rdt = Math.min(iv / 1000, 0.05); last = now;
-  if (resting && document.readyState === 'complete') measurePace(now, iv); else if (!resting && pace.v < 2) sharpen(2);
+  if (resting && document.readyState === 'complete') measurePace(now, iv); else if (!resting && pace.v < 2) sharpen(OPEN);
   if (coarse && rdt > 0.021 && G.on) { if (++slowFrames > 90 && V.dprCap > 1.01) { V.dprCap = V.dprCap > 1.3 ? 1.25 : 1; slowFrames = 0; M!.S.key = ''; size(); } } else slowFrames = Math.max(0, slowFrames - 1);
   if (VP.dir && !(VP.dir > 0 && G.card)) {
     VP.p = clamp(VP.p + VP.dir * rdt / (reduce ? 0.3 : VP.dir > 0 ? BOOST : LAND));
     if (VP.dir > 0 && VP.p >= 1) { VP.dir = 0; M!.boosted(); }
     else if (VP.dir < 0 && VP.p < 0.28 && D.hero.classList.contains('playing')) D.hero.classList.remove('playing');
     if (VP.dir < 0 && VP.p <= 0) M!.landed();
+  }
+  const fl = G.on || VP.p > 0;
+  if (fl !== flying) {
+    flying = fl;
+    if (playRatio() !== restRatio()) {
+      size();
+    }
   }
   const top = G.on && VP.p >= 1, auto = import.meta.env.MODE === 'test' && T.auto;
   if (G.stop > 0) G.stop -= rdt;
